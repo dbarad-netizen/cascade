@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cascade · Investor Engine (Prototype)</title>
+<title>Cascade Venture Capital · Investor Engine</title>
+<meta name="theme-color" content="#0a0a0a" />
 <style>
   :root{
-    --bg:#0a0c10; --panel:#12161e; --panel2:#171c26; --line:#262d3a;
-    --txt:#e8edf5; --muted:#8a96a8; --faint:#5d6779;
-    --accent:#5ba8e6; --accent2:#3d7fbf; --gold:#d8b25b;
-    --green:#4ec98a; --amber:#e0b54e; --red:#e06b6b; --lock:#6b7488;
-    --shadow:0 8px 30px rgba(0,0,0,.45);
+    --bg:#0a0a0a; --panel:#101113; --panel2:#15161a; --line:#23252a;
+    --txt:#f4f4f2; --muted:#8c9097; --faint:#5a5e66;
+    --accent:#6ea3d6; --accent2:#4d7ba8; --gold:#c6a96a;
+    --green:#5cbf8d; --amber:#d4b162; --red:#d97b7b; --lock:#6b7076;
+    --shadow:0 10px 36px rgba(0,0,0,.55);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
@@ -19,21 +20,25 @@
   a{color:var(--accent);text-decoration:none}
   .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
 
-  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c0f15,#0a0c10);position:sticky;top:0;z-index:30}
-  .topbar{display:flex;align-items:center;gap:16px;padding:16px 0}
-  .brand{display:flex;align-items:baseline;gap:10px}
-  .brand .mark{font-weight:700;letter-spacing:.14em;font-size:15px;text-transform:uppercase}
-  .brand .sub{color:var(--muted);font-size:12px;letter-spacing:.04em}
-  .pill{margin-left:auto;font-size:11px;color:var(--gold);border:1px solid #3a3320;background:#1b1810;
-    padding:5px 10px;border-radius:999px;letter-spacing:.05em}
-  nav.tabs{display:flex;gap:4px;padding-bottom:0}
-  nav.tabs button{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;
-    padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.02em}
+  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c0c0c,#0a0a0a);position:sticky;top:0;z-index:30}
+  .topbar{display:flex;align-items:center;gap:16px;padding:18px 0 14px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .mark{font-weight:600;letter-spacing:.30em;font-size:16px;text-transform:uppercase}
+  .brand .divider{width:1px;height:20px;background:var(--line)}
+  .brand .sub{color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+  .est{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .est .yr{color:var(--faint);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .pill{font-size:10px;color:var(--muted);border:1px solid var(--line);background:var(--panel2);
+    padding:5px 11px;border-radius:999px;letter-spacing:.12em;text-transform:uppercase}
+  nav.tabs{display:flex;gap:2px;padding-bottom:0}
+  nav.tabs button{background:none;border:none;color:var(--muted);font-size:11px;font-weight:600;
+    padding:12px 15px;cursor:pointer;border-bottom:1px solid transparent;letter-spacing:.12em;text-transform:uppercase}
   nav.tabs button:hover{color:var(--txt)}
   nav.tabs button.active{color:var(--txt);border-bottom-color:var(--accent)}
 
-  main{padding:26px 0 70px}
-  h1.page{font-size:20px;margin:0 0 4px}
+  main{padding:30px 0 70px}
+  .eyebrow{color:var(--accent);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 8px;font-weight:600}
+  h1.page{font-size:23px;margin:0 0 5px;letter-spacing:-.01em;font-weight:600}
   .lede{color:var(--muted);margin:0 0 22px;max-width:760px}
 
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
@@ -64,17 +69,17 @@
   table{width:100%;border-collapse:collapse}
   th{text-align:left;color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.06em;
     font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--line)}
-  td{padding:11px 10px;border-bottom:1px solid #1c222d;vertical-align:middle}
+  td{padding:11px 10px;border-bottom:1px solid #1d1f23;vertical-align:middle}
   tbody tr{cursor:pointer}
-  tbody tr:hover{background:#151b25}
+  tbody tr:hover{background:#161719}
   .who{font-weight:600}
   .whosub{color:var(--muted);font-size:12px}
   .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);
-    color:var(--muted);background:#141922;white-space:nowrap}
+    color:var(--muted);background:#17181b;white-space:nowrap}
   .sig{color:var(--muted);font-size:12.5px}
   .sigdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
   .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
-  .b-new{color:var(--faint);background:#161a22;border:1px solid var(--line)}
+  .b-new{color:var(--faint);background:#16181b;border:1px solid var(--line)}
   .b-establishing{color:var(--amber);background:#221d10;border:1px solid #3a3118}
   .b-established{color:var(--accent);background:#0f1d2b;border:1px solid #1d3a55}
   .b-active{color:var(--green);background:#0f241a;border:1px solid #1c4030}
@@ -95,7 +100,7 @@
   .drawer.on{transform:none}
   .drawer .x{position:absolute;top:16px;right:18px;color:var(--muted);font-size:20px;cursor:pointer;background:none;border:none}
   .dh{display:flex;align-items:center;gap:12px;margin-bottom:4px}
-  .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1f3550,#13202e);
+  .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1e2024,#141518);
     display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);border:1px solid var(--line)}
   .dh .nm{font-size:17px;font-weight:700}
   .dh .ty{color:var(--muted);font-size:12.5px}
@@ -107,7 +112,7 @@
   /* stepper */
   .steps{display:flex;align-items:center;margin:6px 0 4px}
   .step{flex:1;text-align:center;position:relative}
-  .step .dot{width:18px;height:18px;border-radius:50%;background:#1c222d;border:2px solid var(--line);margin:0 auto;z-index:2;position:relative}
+  .step .dot{width:18px;height:18px;border-radius:50%;background:#1d1f23;border:2px solid var(--line);margin:0 auto;z-index:2;position:relative}
   .step .lab{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.25}
   .step:not(:last-child):after{content:"";position:absolute;top:8px;left:50%;width:100%;height:2px;background:var(--line);z-index:1}
   .step.done .dot{background:var(--accent);border-color:var(--accent)}
@@ -127,11 +132,11 @@
   /* deal matcher */
   .dealgrid{display:grid;grid-template-columns:300px 1fr;gap:18px}
   .deal{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px;cursor:pointer;margin-bottom:10px}
-  .deal.sel{border-color:var(--accent);background:#0f1722}
+  .deal.sel{border-color:var(--accent);background:#12161b}
   .deal .co{font-weight:700;font-size:15px}
   .deal .meta{color:var(--muted);font-size:12px;margin-top:2px}
   .deal .alloc{margin-top:10px;font-size:12px;color:var(--faint)}
-  .allocbar{height:8px;border-radius:6px;background:#1c222d;overflow:hidden;margin-top:6px}
+  .allocbar{height:8px;border-radius:6px;background:#1d1f23;overflow:hidden;margin-top:6px}
   .allocbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:.3s}
   .matchhead{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:6px}
   .bigfill{font-size:30px;font-weight:700;letter-spacing:-.01em}
@@ -141,14 +146,52 @@
   .metricrow .m .l{font-size:11px;color:var(--muted)}
   .mrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--panel2)}
   .mrow.locked{opacity:.6}
-  .mrow .sel-btn{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line);background:#10141c;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;color:#0a0c10;font-size:14px;font-weight:800}
+  .mrow .sel-btn{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line);background:#141517;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;color:#0a0c10;font-size:14px;font-weight:800}
   .mrow.on .sel-btn{background:var(--accent);border-color:var(--accent)}
   .mrow .grow{flex:1;min-width:0}
   .mrow .nm{font-weight:600}
   .mrow .mt{font-size:12px;color:var(--muted)}
   .lockmsg{font-size:11.5px;color:var(--amber);display:flex;align-items:center;gap:6px}
-  .note{background:#10141c;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:12.5px;margin-top:10px}
+  .note{background:#141517;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:12.5px;margin-top:10px}
 
+  /* prospect finder */
+  .presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .preset{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:8px;
+    padding:9px 13px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .preset:hover{color:var(--txt)}
+  .preset.on{border-color:var(--accent);color:var(--txt);background:#12161b}
+  .runbtn{background:var(--accent);border:none;color:#07121c;font-weight:700;border-radius:8px;
+    padding:10px 16px;font-size:13px;cursor:pointer;letter-spacing:.02em}
+  .runbtn:disabled{opacity:.55;cursor:default}
+  .banner{background:#141517;border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:8px;padding:11px 14px;color:var(--muted);font-size:12px;margin:0 0 16px}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;
+    display:flex;gap:16px;align-items:flex-start}
+  .ring{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:14px;border:2px solid var(--accent);color:var(--accent)}
+  .ring.mid{border-color:var(--gold);color:var(--gold)}
+  .ring.low{border-color:var(--faint);color:var(--muted)}
+  .pgrow{flex:1;min-width:0}
+  .pname{font-weight:700;font-size:15px}
+  .pmeta{color:var(--muted);font-size:12px;margin-top:2px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+  .chip{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--muted);background:var(--panel2)}
+  .chip.b{color:var(--accent);border-color:#27425c}
+  .chip.g{color:var(--green);border-color:#1c4030}
+  .ppl{margin-top:10px;font-size:12.5px}
+  .ppl .h{color:var(--faint);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .ppl .person{color:var(--txt)}
+  .ppl .person b{font-weight:600}
+  .ppl .role{color:var(--muted)}
+  .paction{flex:none;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .addbtn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 12px;
+    font-size:12px;cursor:pointer;white-space:nowrap;font-weight:600}
+  .addbtn:hover{border-color:var(--accent)}
+  .addbtn.done{color:var(--green);border-color:#1c4030;cursor:default}
+  .plink{font-size:11.5px}
+  .spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);
+    border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
+  @keyframes sp{to{transform:rotate(360deg)}}
   .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .howcol{columns:2;column-gap:26px}
@@ -165,13 +208,18 @@
     <div class="topbar">
       <div class="brand">
         <span class="mark">Cascade</span>
+        <span class="divider"></span>
         <span class="sub">Investor Engine</span>
       </div>
-      <span class="pill">PROTOTYPE · synthetic data</span>
+      <div class="est">
+        <span class="yr">Est. 2024</span>
+        <span class="pill">Prototype</span>
+      </div>
     </div>
     <nav class="tabs" id="tabs">
       <button data-tab="overview" class="active">Overview</button>
       <button data-tab="pipeline">Investor Pipeline</button>
+      <button data-tab="finder">Prospect Finder</button>
       <button data-tab="matcher">Deal Matcher</button>
       <button data-tab="how">How it works</button>
     </nav>
@@ -252,7 +300,9 @@ const $ = s=>document.querySelector(s);
 const fmt$ = n=> "$"+Math.round(n).toLocaleString("en-US");
 const fmtM = n=> "$"+(n/1e6).toFixed(n%1e6?1:0)+"M";
 const sigDot = s=>`<span class="sigdot" style="background:${SIG[s].color}"></span>`;
-var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:""};
+var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:"",
+  finder:{preset:"ai-funds", loading:false, error:null, data:null, added:{}}};
+var nextInvId = 1000;
 
 /* ---------- views ---------- */
 function viewOverview(){
@@ -264,6 +314,7 @@ function viewOverview(){
   const avgVel = Math.round(ready.reduce((a,i)=>a+i.vel,0)/ready.length);
   const newCt = counts.new + counts.establishing;
   return `
+  <div class="eyebrow">01 — Overview</div>
   <h1 class="page">Pipeline overview</h1>
   <p class="lede">A live view of Cascade's qualified-investor base and the capital it can move on short notice. Everything here is synthetic, for discussion.</p>
   <div class="kpis">
@@ -315,6 +366,7 @@ function viewPipeline(){
         <td><span class="badge ${STAGE[i.stage].badge}">${STAGE[i.stage].lab}</span></td>
       </tr>`).join("");
   return `
+  <div class="eyebrow">02 — Pipeline</div>
   <h1 class="page">Investor pipeline</h1>
   <p class="lede">Every prospect is surfaced by a signal, routed through a warm path on the team, and moved along the 506(b) relationship track. Click any investor for the documented relationship file.</p>
   <div class="filterbar">
@@ -426,6 +478,7 @@ function viewMatcher(){
       </div>
     </div>`;}).join("");
   return `
+  <div class="eyebrow">04 — Allocation</div>
   <h1 class="page">Deal matcher &amp; allocation fill</h1>
   <p class="lede">Pick a live SPV. The engine ranks investors whose appetite and check fit — but it will only let you present the deal to investors with an established 506(b) relationship. Select investors to fill the allocation and watch how fast warm, ready capital comes together.</p>
   <div class="dealgrid">
@@ -454,6 +507,7 @@ function toggleSel(id){
 
 function viewHow(){
   return `
+  <div class="eyebrow">05 — Methodology</div>
   <h1 class="page">How the engine works</h1>
   <p class="lede">The whole design follows from one fact: Cascade's SPVs are normally 506(b), so it can only show a deal to investors it already has a pre-existing, substantive relationship with. The engine is built to create and document those relationships at scale — before deals exist.</p>
   <div class="panel"><h2>1 · Find</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists: liquidity events (IPOs, tenders, secondaries), tech wealth and operators, family offices &amp; RIAs, and cap-table holders of the very companies Cascade backs. Each is routed to the team member with the warmest path.</p></div>
@@ -463,9 +517,108 @@ function viewHow(){
   <p class="footnote">Synthetic prototype for discussion. 506(b) / Citizen VC logic is illustrative of the product design, not legal advice — specifics to be confirmed with counsel.</p>`;
 }
 
+/* ---------- prospect finder (live SEC data) ---------- */
+const FPRESETS=[
+  {k:"ai-funds",       label:"AI-focused funds"},
+  {k:"family-offices", label:"Family offices"},
+  {k:"spv-sponsors",   label:"SPV sponsors"},
+  {k:"ai-ipos",        label:"Recent AI IPO filers"},
+];
+const PRESET_SIG={ "ai-funds":"syndicate", "family-offices":"familyoffice", "spv-sponsors":"syndicate", "ai-ipos":"liquidity" };
+
+function setPreset(k){ state.finder.preset=k; render(); }
+
+function runFinder(){
+  const f=state.finder; f.loading=true; f.error=null; render();
+  fetch("/api/find-prospects?preset="+encodeURIComponent(f.preset))
+    .then(r=> r.json().then(j=> r.ok ? j : Promise.reject(new Error(j.error||("HTTP "+r.status)))))
+    .then(d=>{ f.loading=false; f.data=d; f.added={}; render(); })
+    .catch(e=>{ f.loading=false; f.error=String(e&&e.message||e); render(); });
+}
+
+function ringClass(s){ return s>=75?"":(s>=55?"mid":"low"); }
+
+function prospectCard(p, idx){
+  const added=!!state.finder.added[idx];
+  const chips=[];
+  if(p.exemption&&p.exemption!=="—") chips.push(`<span class="chip ${p.exemption==="506(b)"?"b":""}">${p.exemption}</span>`);
+  chips.push(`<span class="chip">${p.form} · ${p.date}</span>`);
+  if(p.location||p.incState) chips.push(`<span class="chip">${p.location||("Inc. "+p.incState)}</span>`);
+  if(p.offering&&p.offering.fundType) chips.push(`<span class="chip">${p.offering.fundType}</span>`);
+  if(p.offering&&p.offering.investorCount) chips.push(`<span class="chip">${p.offering.investorCount} investors</span>`);
+  if(p.offering&&p.offering.allAccredited) chips.push(`<span class="chip g">All accredited</span>`);
+  if(p.offering&&p.offering.sold) chips.push(`<span class="chip">${fmtM(p.offering.sold)} raised</span>`);
+  if(p.offering&&p.offering.minInvestment) chips.push(`<span class="chip">min ${fmt$(p.offering.minInvestment)}</span>`);
+  let ppl="";
+  if(p.principals&&p.principals.length){
+    ppl=`<div class="ppl"><div class="h">Named principals (warm-path targets)</div>`+
+      p.principals.slice(0,4).map(x=>`<div class="person"><b>${x.name}</b>${x.roles&&x.roles.length?` <span class="role">— ${x.roles.join(", ")}</span>`:""}</div>`).join("")+
+      `</div>`;
+  }
+  return `<div class="pcard">
+    <div class="ring ${ringClass(p.score)}">${p.score}</div>
+    <div class="pgrow">
+      <div class="pname">${p.name||"(unnamed filer)"}</div>
+      <div class="pmeta">Sourced from public SEC filing · fit score ${p.score}/100</div>
+      <div class="chips">${chips.join("")}</div>
+      ${ppl}
+    </div>
+    <div class="paction">
+      <button class="addbtn ${added?"done":""}" ${added?"":`onclick="addFromFinder(${idx})"`}>${added?"✓ Added":"Add to pipeline →"}</button>
+      <a class="plink" href="${p.filingUrl}" target="_blank" rel="noopener">View SEC filing ↗</a>
+    </div>
+  </div>`;
+}
+
+function addFromFinder(idx){
+  const p=state.finder.data.prospects[idx];
+  const contact=(p.principals&&p.principals[0]&&p.principals[0].name)||p.name;
+  const since=new Date().toISOString().slice(0,7);
+  INV.push({
+    id:nextInvId++, name:contact,
+    type:p.principals&&p.principals.length?("Principal · "+p.name):((p.offering&&p.offering.fundType)||(p.form+" filer")),
+    loc:p.location||p.incState||"—",
+    sig:PRESET_SIG[state.finder.preset]||"syndicate",
+    sigTxt:`SEC ${p.form} · ${p.date}${p.exemption&&p.exemption!=="—"?" · "+p.exemption:""}`,
+    conn:"inbound", acc:"Unverified", stage:"new",
+    check:(p.offering&&p.offering.minInvestment)||0, vel:14,
+    sectors:["Foundation Models","AI Infra","AI Apps"],
+    prior:0, since, touch:0,
+  });
+  state.finder.added[idx]=true; render();
+}
+
+function viewFinder(){
+  const f=state.finder;
+  const isFile = location.protocol==="file:";
+  const presets=FPRESETS.map(x=>`<button class="preset ${f.preset===x.k?"on":""}" onclick="setPreset('${x.k}')">${x.label}</button>`).join("");
+  let body="";
+  if(isFile){
+    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link (e.g. <b>cascade-weld.vercel.app</b>) to query the SEC — opening the raw file locally can’t reach the API.</div>`;
+  } else if(f.loading){
+    body=`<div class="panel"><span class="spin"></span>Querying SEC EDGAR live…</div>`;
+  } else if(f.error){
+    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>Couldn’t reach the SEC API: ${f.error}. Try again in a moment.</span></div>`;
+  } else if(f.data){
+    const ps=f.data.prospects||[];
+    body=`<div class="muted" style="margin:0 0 12px">${ps.length} filers · ${f.data.label} · as of ${(f.data.asOf||"").slice(0,10)}</div>`+
+      (ps.length?ps.map((p,i)=>prospectCard(p,i)).join(""):`<div class="note">No filings matched in the last 12 months. Try another source.</div>`);
+  } else {
+    body=`<div class="note">Pick a source above and run a live search. Results come straight from public SEC EDGAR filings — real entities, real named principals, no synthetic data.</div>`;
+  }
+  return `
+  <div class="eyebrow">03 — Live Sourcing</div>
+  <h1 class="page">Prospect finder</h1>
+  <p class="lede">Surfaces real prospective investors from public SEC filings — AI-focused funds and their named principals, family offices, SPV sponsors, and recent liquidity events. Each enters the pipeline as a <b>new prospect</b> to begin relationship-building.</p>
+  <div class="banner">Live, public SEC EDGAR data. These are sourcing signals to begin a relationship under 506(b) — not an offer or solicitation, and accreditation is never assumed.</div>
+  <div class="presets">${presets}</div>
+  <div style="margin-bottom:18px"><button class="runbtn" ${f.loading?"disabled":""} onclick="runFinder()">${f.loading?"Searching…":"Search SEC (live)"}</button></div>
+  ${body}`;
+}
+
 /* ---------- router ---------- */
 function render(){
-  const v={overview:viewOverview,pipeline:viewPipeline,matcher:viewMatcher,how:viewHow}[state.tab]();
+  const v={overview:viewOverview,pipeline:viewPipeline,finder:viewFinder,matcher:viewMatcher,how:viewHow}[state.tab]();
   $("#main").innerHTML=v;
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
