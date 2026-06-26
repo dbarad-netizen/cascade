@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cascade · Investor Engine (Prototype)</title>
+<style>
+  :root{
+    --bg:#0a0c10; --panel:#12161e; --panel2:#171c26; --line:#262d3a;
+    --txt:#e8edf5; --muted:#8a96a8; --faint:#5d6779;
+    --accent:#5ba8e6; --accent2:#3d7fbf; --gold:#d8b25b;
+    --green:#4ec98a; --amber:#e0b54e; --red:#e06b6b; --lock:#6b7488;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c0f15,#0a0c10);position:sticky;top:0;z-index:30}
+  .topbar{display:flex;align-items:center;gap:16px;padding:16px 0}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand .mark{font-weight:700;letter-spacing:.14em;font-size:15px;text-transform:uppercase}
+  .brand .sub{color:var(--muted);font-size:12px;letter-spacing:.04em}
+  .pill{margin-left:auto;font-size:11px;color:var(--gold);border:1px solid #3a3320;background:#1b1810;
+    padding:5px 10px;border-radius:999px;letter-spacing:.05em}
+  nav.tabs{display:flex;gap:4px;padding-bottom:0}
+  nav.tabs button{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;
+    padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.02em}
+  nav.tabs button:hover{color:var(--txt)}
+  nav.tabs button.active{color:var(--txt);border-bottom-color:var(--accent)}
+
+  main{padding:26px 0 70px}
+  h1.page{font-size:20px;margin:0 0 4px}
+  .lede{color:var(--muted);margin:0 0 22px;max-width:760px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px}
+  .kpi .v{font-size:26px;font-weight:700;letter-spacing:-.01em}
+  .kpi .l{color:var(--muted);font-size:12px;margin-top:3px}
+  .kpi .d{font-size:11px;margin-top:7px;color:var(--faint)}
+  .kpi.accent .v{color:var(--accent)}
+  .kpi.gold .v{color:var(--gold)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+  .panel h2{margin:0 0 4px;font-size:15px}
+  .panel .sub{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+
+  /* funnel */
+  .funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .fstep{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative}
+  .fstep .n{font-size:24px;font-weight:700}
+  .fstep .t{color:var(--muted);font-size:12px;margin-top:2px}
+  .fstep .cap{font-size:11px;color:var(--faint);margin-top:8px}
+  .fstep.s-new .n{color:var(--faint)}
+  .fstep.s-establishing .n{color:var(--amber)}
+  .fstep.s-established .n{color:var(--accent)}
+  .fstep.s-active .n{color:var(--green)}
+  .arrow{color:var(--faint);text-align:center;font-size:18px}
+
+  /* table */
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--line)}
+  td{padding:11px 10px;border-bottom:1px solid #1c222d;vertical-align:middle}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:#151b25}
+  .who{font-weight:600}
+  .whosub{color:var(--muted);font-size:12px}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);
+    color:var(--muted);background:#141922;white-space:nowrap}
+  .sig{color:var(--muted);font-size:12.5px}
+  .sigdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .b-new{color:var(--faint);background:#161a22;border:1px solid var(--line)}
+  .b-establishing{color:var(--amber);background:#221d10;border:1px solid #3a3118}
+  .b-established{color:var(--accent);background:#0f1d2b;border:1px solid #1d3a55}
+  .b-active{color:var(--green);background:#0f241a;border:1px solid #1c4030}
+  .chk{font-variant-numeric:tabular-nums;font-weight:600}
+  .right{text-align:right}
+  .filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .filterbar select,.filterbar input{background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    border-radius:8px;padding:8px 10px;font-size:13px}
+  .filterbar .spacer{flex:1}
+  .muted{color:var(--muted)}
+
+  /* drawer */
+  .scrim{position:fixed;inset:0;background:rgba(4,6,9,.6);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:460px;max-width:94vw;background:var(--panel);
+    border-left:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(100%);transition:.24s;z-index:50;
+    overflow-y:auto;padding:22px}
+  .drawer.on{transform:none}
+  .drawer .x{position:absolute;top:16px;right:18px;color:var(--muted);font-size:20px;cursor:pointer;background:none;border:none}
+  .dh{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1f3550,#13202e);
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);border:1px solid var(--line)}
+  .dh .nm{font-size:17px;font-weight:700}
+  .dh .ty{color:var(--muted);font-size:12.5px}
+  .sec{margin-top:18px}
+  .sec h4{margin:0 0 9px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint)}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid #1b212c;font-size:13px}
+  .kv .k{color:var(--muted)}
+  .kv .v{text-align:right;font-weight:600}
+  /* stepper */
+  .steps{display:flex;align-items:center;margin:6px 0 4px}
+  .step{flex:1;text-align:center;position:relative}
+  .step .dot{width:18px;height:18px;border-radius:50%;background:#1c222d;border:2px solid var(--line);margin:0 auto;z-index:2;position:relative}
+  .step .lab{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.25}
+  .step:not(:last-child):after{content:"";position:absolute;top:8px;left:50%;width:100%;height:2px;background:var(--line);z-index:1}
+  .step.done .dot{background:var(--accent);border-color:var(--accent)}
+  .step.done.act .dot{background:var(--green);border-color:var(--green)}
+  .step.done .lab{color:var(--txt)}
+  .step.curr .dot{box-shadow:0 0 0 4px rgba(91,168,230,.18)}
+  .timeline{list-style:none;margin:0;padding:0}
+  .timeline li{position:relative;padding:0 0 12px 18px;font-size:12.5px;color:var(--muted)}
+  .timeline li:before{content:"";position:absolute;left:0;top:5px;width:8px;height:8px;border-radius:50%;background:var(--accent2)}
+  .timeline li:not(:last-child):after{content:"";position:absolute;left:3.5px;top:11px;bottom:0;width:1px;background:var(--line)}
+  .timeline li b{color:var(--txt);font-weight:600}
+  .elig{margin-top:14px;border-radius:10px;padding:11px 13px;font-size:12.5px;display:flex;gap:9px;align-items:flex-start}
+  .elig.ok{background:#0f241a;border:1px solid #1c4030;color:#bfe9d2}
+  .elig.no{background:#241616;border:1px solid #402020;color:#e9c7c7}
+  .elig .i{font-weight:700}
+
+  /* deal matcher */
+  .dealgrid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+  .deal{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px;cursor:pointer;margin-bottom:10px}
+  .deal.sel{border-color:var(--accent);background:#0f1722}
+  .deal .co{font-weight:700;font-size:15px}
+  .deal .meta{color:var(--muted);font-size:12px;margin-top:2px}
+  .deal .alloc{margin-top:10px;font-size:12px;color:var(--faint)}
+  .allocbar{height:8px;border-radius:6px;background:#1c222d;overflow:hidden;margin-top:6px}
+  .allocbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:.3s}
+  .matchhead{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:6px}
+  .bigfill{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  .bigfill small{font-size:14px;color:var(--muted);font-weight:500}
+  .metricrow{display:flex;gap:26px;margin:4px 0 16px;flex-wrap:wrap}
+  .metricrow .m .v{font-size:18px;font-weight:700}
+  .metricrow .m .l{font-size:11px;color:var(--muted)}
+  .mrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--panel2)}
+  .mrow.locked{opacity:.6}
+  .mrow .sel-btn{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line);background:#10141c;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;color:#0a0c10;font-size:14px;font-weight:800}
+  .mrow.on .sel-btn{background:var(--accent);border-color:var(--accent)}
+  .mrow .grow{flex:1;min-width:0}
+  .mrow .nm{font-weight:600}
+  .mrow .mt{font-size:12px;color:var(--muted)}
+  .lockmsg{font-size:11.5px;color:var(--amber);display:flex;align-items:center;gap:6px}
+  .note{background:#10141c;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:12.5px;margin-top:10px}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .howcol{columns:2;column-gap:26px}
+  @media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr)}.dealgrid{grid-template-columns:1fr}.funnel{grid-template-columns:1fr 1fr}.howcol{columns:1}}
+  .footnote{color:var(--faint);font-size:11.5px;margin-top:26px;border-top:1px solid var(--line);padding-top:14px}
+  .seclist{font-size:12px;color:var(--muted)}
+  .warm{font-size:12px}
+  .warm b{color:var(--txt)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <span class="mark">Cascade</span>
+        <span class="sub">Investor Engine</span>
+      </div>
+      <span class="pill">PROTOTYPE · synthetic data</span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="overview" class="active">Overview</button>
+      <button data-tab="pipeline">Investor Pipeline</button>
+      <button data-tab="matcher">Deal Matcher</button>
+      <button data-tab="how">How it works</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer"></aside>
+
+<script>
+/* ---------- synthetic data ---------- */
+const TEAM = {
+  berg:   {name:"Matt Berg",      net:"Wall Street / hedge-fund LPs"},
+  weis:   {name:"Matt Weisbarth", net:"Pre-IPO secondary network"},
+  jerry:  {name:"Jerry Weitzman", net:"Databricks / operator network"},
+  dustin: {name:"Dustin McCormick",net:"RIA / wealth-management network"},
+  inbound:{name:"Inbound / referral", net:"Existing-investor referral"}
+};
+const SIG = {
+  liquidity:{label:"Liquidity event", color:"#d8b25b"},
+  techwealth:{label:"Tech wealth", color:"#5ba8e6"},
+  familyoffice:{label:"Family office", color:"#9b8cf0"},
+  captable:{label:"Cap-table holder", color:"#4ec98a"},
+  syndicate:{label:"Syndicate member", color:"#e08a5b"},
+};
+// stages: new -> establishing -> established -> active   (eligible = established|active)
+let INV = [
+  {id:1, name:"Helena Voss", type:"Family Office (single)", loc:"Greenwich, CT", sig:"familyoffice", sigTxt:"$400M SFO, AI allocation mandate", conn:"berg", acc:"QP", stage:"active", check:500000, vel:3, sectors:["Foundation Models","AI Infra"], prior:5, since:"2024-09", touch:6},
+  {id:2, name:"Marcus Lindqvist", type:"Tech Exec (ex-Stripe)", loc:"San Francisco", sig:"liquidity", sigTxt:"Secondary sale, Stripe — Apr 2026", conn:"weis", acc:"Accredited", stage:"active", check:150000, vel:3, sectors:["AI Apps","Dev Tools"], prior:3, since:"2024-11", touch:9},
+  {id:3, name:"Priya Nadkarni", type:"Operator (ex-Databricks)", loc:"Seattle", sig:"captable", sigTxt:"Databricks cap-table holder", conn:"jerry", acc:"QP", stage:"active", check:250000, vel:3, sectors:["AI Infra","Foundation Models"], prior:4, since:"2024-08", touch:4},
+  {id:4, name:"The Aldridge Group", type:"Family Office (multi)", loc:"Dallas", sig:"familyoffice", sigTxt:"MFO, alternatives sleeve", conn:"dustin", acc:"QP", stage:"established", check:750000, vel:7, sectors:["AI Infra","AI Apps","Foundation Models"], prior:1, since:"2025-12", touch:12},
+  {id:5, name:"Daniel Okafor", type:"Tech Exec (ex-Snowflake)", loc:"Austin", sig:"liquidity", sigTxt:"IPO lockup expiry — Mar 2026", conn:"jerry", acc:"Accredited", stage:"established", check:200000, vel:7, sectors:["AI Infra","Dev Tools"], prior:0, since:"2026-01", touch:8},
+  {id:6, name:"Sofia Reyes", type:"RIA (client book)", loc:"Miami", sig:"familyoffice", sigTxt:"RIA, 40+ accredited clients", conn:"dustin", acc:"Accredited", stage:"established", check:300000, vel:7, sectors:["Foundation Models","AI Apps"], prior:2, since:"2025-10", touch:15},
+  {id:7, name:"Jonathan Wexler", type:"Hedge-fund PM", loc:"New York", sig:"techwealth", sigTxt:"Ex-Highbridge colleague", conn:"berg", acc:"QP", stage:"active", check:1000000, vel:3, sectors:["Foundation Models","AI Infra"], prior:6, since:"2024-07", touch:3},
+  {id:8, name:"Yuki Tanaka", type:"Tech Exec (ex-Vercel)", loc:"San Francisco", sig:"captable", sigTxt:"Vercel early employee, secondary", conn:"weis", acc:"Accredited", stage:"established", check:120000, vel:7, sectors:["Dev Tools","AI Apps"], prior:1, since:"2025-11", touch:20},
+  {id:9, name:"Gregory Palmer", type:"Family Office (single)", loc:"Palm Beach", sig:"familyoffice", sigTxt:"$1B+ SFO, pre-IPO focus", conn:"weis", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps"], prior:0, since:"2026-05", touch:5},
+  {id:10, name:"Amara Bello", type:"Operator (ex-Groq)", loc:"Mountain View", sig:"captable", sigTxt:"Groq cap-table holder", conn:"jerry", acc:"Accredited", stage:"establishing", check:150000, vel:7, sectors:["AI Infra"], prior:0, since:"2026-05", touch:7},
+  {id:11, name:"Connor Walsh", type:"Tech Exec (ex-Coinbase)", loc:"New York", sig:"liquidity", sigTxt:"Large secondary — May 2026", conn:"berg", acc:"Accredited", stage:"establishing", check:250000, vel:7, sectors:["AI Apps","AI Infra"], prior:0, since:"2026-05", touch:11},
+  {id:12, name:"Isabelle Moreau", type:"RIA (client book)", loc:"Boston", sig:"familyoffice", sigTxt:"RIA, alternatives mandate", conn:"dustin", acc:"Accredited", stage:"establishing", check:400000, vel:14, sectors:["Foundation Models"], prior:0, since:"2026-06", touch:9},
+  {id:13, name:"Rahul Mehta", type:"Syndicate lead", loc:"San Francisco", sig:"syndicate", sigTxt:"Active in 3 pre-IPO syndicates", conn:"weis", acc:"QP", stage:"established", check:350000, vel:3, sectors:["Foundation Models","AI Apps","AI Infra"], prior:2, since:"2025-09", touch:6},
+  {id:14, name:"The Hartwell Trust", type:"Family Office (multi)", loc:"Chicago", sig:"familyoffice", sigTxt:"MFO referral from Aldridge", conn:"inbound", acc:"QP", stage:"establishing", check:600000, vel:14, sectors:["AI Infra","Foundation Models"], prior:0, since:"2026-06", touch:4},
+  {id:15, name:"Elena Castellanos", type:"Tech Exec (ex-Databricks)", loc:"Seattle", sig:"captable", sigTxt:"Databricks secondary holder", conn:"jerry", acc:"Accredited", stage:"active", check:200000, vel:3, sectors:["AI Infra","Foundation Models"], prior:3, since:"2024-10", touch:5},
+  {id:16, name:"Thomas Bauer", type:"Family Office (single)", loc:"Zurich (US-eligible)", sig:"familyoffice", sigTxt:"SFO, US-accredited entity", conn:"berg", acc:"QP", stage:"new", check:800000, vel:14, sectors:["Foundation Models","AI Infra"], prior:0, since:"2026-06", touch:1},
+  {id:17, name:"Naomi Pearl", type:"Operator (ex-OpenAI)", loc:"San Francisco", sig:"captable", sigTxt:"OpenAI tender participant", conn:"jerry", acc:"Accredited", stage:"new", check:300000, vel:14, sectors:["Foundation Models","AI Apps"], prior:0, since:"2026-06", touch:2},
+  {id:18, name:"David Sterling", type:"Hedge-fund PM", loc:"New York", sig:"techwealth", sigTxt:"Ex-York Capital network", conn:"berg", acc:"QP", stage:"new", check:750000, vel:14, sectors:["Foundation Models","AI Infra"], prior:0, since:"2026-06", touch:3},
+  {id:19, name:"Grace Liu", type:"Tech Exec (ex-Ramp)", loc:"New York", sig:"liquidity", sigTxt:"Ramp secondary — 2026", conn:"weis", acc:"Accredited", stage:"new", check:150000, vel:14, sectors:["AI Apps"], prior:0, since:"2026-06", touch:2},
+  {id:20, name:"Fairmont Capital MFO", type:"Family Office (multi)", loc:"San Francisco", sig:"familyoffice", sigTxt:"MFO, $2B AUM, AI thesis", conn:"dustin", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps","Dev Tools"], prior:0, since:"2026-04", touch:6},
+  {id:21, name:"Owen Brady", type:"Tech Exec (ex-CoreWeave)", loc:"New Jersey", sig:"captable", sigTxt:"CoreWeave cap-table holder", conn:"jerry", acc:"Accredited", stage:"active", check:250000, vel:3, sectors:["AI Infra"], prior:2, since:"2025-02", touch:7},
+  {id:22, name:"Lydia Fenwick", type:"RIA (client book)", loc:"Denver", sig:"familyoffice", sigTxt:"RIA, pre-IPO interest", conn:"dustin", acc:"Accredited", stage:"new", check:200000, vel:14, sectors:["AI Apps","AI Infra"], prior:0, since:"2026-06", touch:1},
+  {id:23, name:"Anders Holm", type:"Syndicate member", loc:"Boston", sig:"syndicate", sigTxt:"Member, 2 AI syndicates", conn:"weis", acc:"Accredited", stage:"established", check:175000, vel:7, sectors:["AI Infra","AI Apps"], prior:1, since:"2025-12", touch:13},
+  {id:24, name:"Beatrice Okwu", type:"Family Office (single)", loc:"Houston", sig:"familyoffice", sigTxt:"SFO, energy-to-AI rotation", conn:"inbound", acc:"QP", stage:"establishing", check:500000, vel:7, sectors:["AI Infra"], prior:0, since:"2026-05", touch:8},
+  {id:25, name:"Samuel Adeyemi", type:"Tech Exec (ex-Lambda)", loc:"San Francisco", sig:"captable", sigTxt:"Lambda cap-table holder", conn:"jerry", acc:"Accredited", stage:"active", check:200000, vel:3, sectors:["AI Infra"], prior:2, since:"2025-03", touch:6},
+  {id:26, name:"Whitcombe Partners", type:"Family Office (multi)", loc:"New York", sig:"familyoffice", sigTxt:"MFO referral, Wexler intro", conn:"berg", acc:"QP", stage:"established", check:900000, vel:7, sectors:["Foundation Models","AI Infra"], prior:1, since:"2025-11", touch:10},
+  {id:27, name:"Mina Farahani", type:"Operator (ex-Anthropic)", loc:"San Francisco", sig:"captable", sigTxt:"Anthropic tender participant", conn:"jerry", acc:"Accredited", stage:"new", check:300000, vel:14, sectors:["Foundation Models"], prior:0, since:"2026-06", touch:1},
+  {id:28, name:"Robert Kingsley", type:"Hedge-fund PM", loc:"Greenwich, CT", sig:"techwealth", sigTxt:"Ex-Manhattan West contact", conn:"berg", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps"], prior:0, since:"2026-04", touch:5},
+];
+
+const DEALS = [
+  {id:"anthropic", co:"Anthropic", sector:"Foundation Models", round:"Secondary / SPV", price:"$350B implied", alloc:5000000, min:100000, window:7},
+  {id:"groq", co:"Groq", sector:"AI Infra", round:"Primary SPV", price:"$6.9B implied", alloc:3000000, min:50000, window:10},
+  {id:"coreweave", co:"CoreWeave", sector:"AI Infra", round:"Secondary / SPV", price:"$23B implied", alloc:4000000, min:250000, window:5},
+  {id:"vercel", co:"Vercel", sector:"Dev Tools", round:"Primary SPV", price:"$3.6B implied", alloc:2000000, min:50000, window:14},
+];
+
+const STAGE = {
+  new:{lab:"New prospect", badge:"b-new", order:0},
+  establishing:{lab:"In establishment", badge:"b-establishing", order:1},
+  established:{lab:"Established · eligible", badge:"b-established", order:2},
+  active:{lab:"Active investor", badge:"b-active", order:3},
+};
+const eligible = (i)=> i.stage==="established" || i.stage==="active";
+const VELLAB = {3:"~3 days",7:"~1 week",14:"~2 weeks"};
+
+/* ---------- helpers ---------- */
+const $ = s=>document.querySelector(s);
+const fmt$ = n=> "$"+Math.round(n).toLocaleString("en-US");
+const fmtM = n=> "$"+(n/1e6).toFixed(n%1e6?1:0)+"M";
+const sigDot = s=>`<span class="sigdot" style="background:${SIG[s].color}"></span>`;
+var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:""};
+
+/* ---------- views ---------- */
+function viewOverview(){
+  const counts={new:0,establishing:0,established:0,active:0};
+  INV.forEach(i=>counts[i.stage]++);
+  const ready = INV.filter(eligible);
+  const readyCap = ready.reduce((a,i)=>a+i.check,0);
+  const activeCap = INV.filter(i=>i.stage==="active").reduce((a,i)=>a+i.check,0);
+  const avgVel = Math.round(ready.reduce((a,i)=>a+i.vel,0)/ready.length);
+  const newCt = counts.new + counts.establishing;
+  return `
+  <h1 class="page">Pipeline overview</h1>
+  <p class="lede">A live view of Cascade's qualified-investor base and the capital it can move on short notice. Everything here is synthetic, for discussion.</p>
+  <div class="kpis">
+    <div class="kpi accent"><div class="v">${ready.length}</div><div class="l">Qualified &amp; eligible investors</div><div class="d">Relationship established under 506(b)</div></div>
+    <div class="kpi gold"><div class="v">${fmtM(readyCap)}</div><div class="l">Ready capital</div><div class="d">Sum of typical checks, eligible base</div></div>
+    <div class="kpi"><div class="v">~${avgVel}d</div><div class="l">Avg. time-to-commit</div><div class="d">Across eligible investors</div></div>
+    <div class="kpi"><div class="v">${newCt}</div><div class="l">In the funnel</div><div class="d">New + relationship-establishing</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>The 506(b) relationship funnel</h2>
+    <p class="sub">Prospects must move from a documented, substantive relationship to "eligible" before any deal can be shown. The job of the engine is to keep this funnel full and flowing.</p>
+    <div class="funnel">
+      <div class="fstep s-new"><div class="n">${counts.new}</div><div class="t">New prospects</div><div class="cap">Surfaced by signal · not yet contacted substantively</div></div>
+      <div class="fstep s-establishing"><div class="n">${counts.establishing}</div><div class="t">In establishment</div><div class="cap">Relationship-building underway · no deals shown</div></div>
+      <div class="fstep s-established"><div class="n">${counts.established}</div><div class="t">Established</div><div class="cap">Eligible · can be shown deals</div></div>
+      <div class="fstep s-active"><div class="n">${counts.active}</div><div class="t">Active</div><div class="cap">Has invested · fastest to re-commit</div></div>
+    </div>
+    <div class="legend">
+      <span>${sigDot("liquidity")} Liquidity event</span>
+      <span>${sigDot("techwealth")} Tech wealth</span>
+      <span>${sigDot("familyoffice")} Family office / RIA</span>
+      <span>${sigDot("captable")} Cap-table holder</span>
+      <span>${sigDot("syndicate")} Syndicate member</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Why this is the lever</h2>
+    <p class="sub" style="margin-bottom:0">${fmtM(activeCap)} of capital sits with <b>active</b> investors who typically commit in ~3 days. A warm, ready base is what lets Cascade say "yes" to a larger allocation on short notice — which is exactly what wins access to oversubscribed rounds. Grow this base and you raise more <i>and</i> get into better deals.</p>
+  </div>
+  <p class="footnote">Prototype with synthetic data. The 506(b) eligibility logic shown is illustrative of the design, not legal advice.</p>`;
+}
+
+function viewPipeline(){
+  const types = ["all",...Array.from(new Set(INV.map(i=>i.type.split(" (")[0]))).sort()];
+  const rows = INV
+    .filter(i=> state.fStage==="all"||i.stage===state.fStage)
+    .filter(i=> state.fType==="all"||i.type.startsWith(state.fType))
+    .filter(i=> !state.q || i.name.toLowerCase().includes(state.q.toLowerCase()))
+    .sort((a,b)=> STAGE[b.stage].order-STAGE[a.stage].order || b.check-a.check)
+    .map(i=>`
+      <tr onclick="openDrawer(${i.id})">
+        <td><div class="who">${i.name}</div><div class="whosub">${i.type} · ${i.loc}</div></td>
+        <td><div class="sig">${sigDot(i.sig)}${i.sigTxt}</div></td>
+        <td><div class="warm"><b>${TEAM[i.conn].name}</b><div class="whosub">${TEAM[i.conn].net}</div></div></td>
+        <td><span class="tag">${i.acc}</span></td>
+        <td class="right chk">${fmt$(i.check)}</td>
+        <td><span class="badge ${STAGE[i.stage].badge}">${STAGE[i.stage].lab}</span></td>
+      </tr>`).join("");
+  return `
+  <h1 class="page">Investor pipeline</h1>
+  <p class="lede">Every prospect is surfaced by a signal, routed through a warm path on the team, and moved along the 506(b) relationship track. Click any investor for the documented relationship file.</p>
+  <div class="filterbar">
+    <input id="q" placeholder="Search name…" value="${state.q}" oninput="state.q=this.value;render()" />
+    <select onchange="state.fType=this.value;render()">
+      ${types.map(t=>`<option ${state.fType===t?"selected":""}>${t==="all"?"All types":t}</option>`).join("")}
+    </select>
+    <select onchange="state.fStage=this.value;render()">
+      <option value="all" ${state.fStage==="all"?"selected":""}>All stages</option>
+      ${Object.keys(STAGE).map(s=>`<option value="${s}" ${state.fStage===s?"selected":""}>${STAGE[s].lab}</option>`).join("")}
+    </select>
+    <div class="spacer"></div>
+    <span class="muted">${rows? INV.filter(i=>(state.fStage==="all"||i.stage===state.fStage)&&(state.fType==="all"||i.type.startsWith(state.fType))&&(!state.q||i.name.toLowerCase().includes(state.q.toLowerCase()))).length : 0} shown</span>
+  </div>
+  <div class="panel" style="padding:14px 18px">
+    <table>
+      <thead><tr><th>Investor</th><th>Sourcing signal</th><th>Warm path</th><th>Status</th><th class="right">Typical check</th><th>Relationship stage</th></tr></thead>
+      <tbody>${rows||`<tr><td colspan="6" class="muted" style="padding:24px">No matches.</td></tr>`}</tbody>
+    </table>
+  </div>`;
+}
+
+function relTimeline(i){
+  const base=[
+    {t:"Surfaced by signal", d:`${SIG[i.sig].label}: ${i.sigTxt}`},
+    {t:"Routed to warm path", d:`Intro via ${TEAM[i.conn].name} — ${TEAM[i.conn].net}`},
+  ];
+  if(STAGE[i.stage].order>=1) base.push({t:"Relationship-establishment opened", d:`Since ${i.since}. Intro call held; sophistication &amp; objectives discussed.`});
+  if(STAGE[i.stage].order>=2) base.push({t:"Substantive relationship established", d:`Accreditation (${i.acc}) confirmed; financial circumstances &amp; risk tolerance documented. Now eligible for offerings.`});
+  if(STAGE[i.stage].order>=3) base.push({t:"Active investor", d:`${i.prior} prior SPV participation(s). Re-commits in ${VELLAB[i.vel]}.`});
+  if(i.stage==="new") base.push({t:"Next step", d:"Schedule substantive intro call. No offering shown until relationship is established."});
+  if(i.stage==="establishing") base.push({t:"Next step", d:"Complete sophistication &amp; accreditation documentation to reach eligibility."});
+  return base.map(x=>`<li><b>${x.t}</b><br>${x.d}</li>`).join("");
+}
+function stepper(i){
+  const ks=["new","establishing","established","active"];
+  const cur=STAGE[i.stage].order;
+  return `<div class="steps">${ks.map((k,ix)=>`
+    <div class="step ${ix<=cur?"done":""} ${ix===cur?"curr":""} ${k==="active"?"act":""}">
+      <div class="dot"></div><div class="lab">${STAGE[k].lab.replace(" · "," ")}</div>
+    </div>`).join("")}</div>`;
+}
+function openDrawer(id){
+  const i=INV.find(x=>x.id===id);
+  const ok=eligible(i);
+  const initials=i.name.split(" ").slice(0,2).map(w=>w[0]).join("");
+  $("#drawer").innerHTML=`
+    <button class="x" onclick="closeDrawer()">×</button>
+    <div class="dh"><div class="avatar">${initials}</div>
+      <div><div class="nm">${i.name}</div><div class="ty">${i.type} · ${i.loc}</div></div></div>
+    <div class="elig ${ok?"ok":"no"}">
+      <span class="i">${ok?"✓":"⦸"}</span>
+      <span>${ok
+        ? "Eligible under 506(b): substantive relationship established — Cascade may present offerings."
+        : "Not yet eligible: no specific offering may be shown until a substantive relationship is established (506(b))."}</span>
+    </div>
+    <div class="sec"><h4>Relationship stage</h4>${stepper(i)}</div>
+    <div class="sec"><h4>Profile</h4>
+      <div class="kv"><span class="k">Accreditation</span><span class="v">${i.acc==="QP"?"Qualified Purchaser":"Accredited"}</span></div>
+      <div class="kv"><span class="k">Typical check</span><span class="v">${fmt$(i.check)}</span></div>
+      <div class="kv"><span class="k">Sector appetite</span><span class="v">${i.sectors.join(", ")}</span></div>
+      <div class="kv"><span class="k">Typical time-to-commit</span><span class="v">${VELLAB[i.vel]}</span></div>
+      <div class="kv"><span class="k">Prior SPVs with Cascade</span><span class="v">${i.prior}</span></div>
+      <div class="kv"><span class="k">Last substantive touch</span><span class="v">${i.touch} days ago ${i.touch>14?'· <span style="color:var(--amber)">needs touch</span>':''}</span></div>
+      <div class="kv"><span class="k">Warm path</span><span class="v">${TEAM[i.conn].name}</span></div>
+    </div>
+    <div class="sec"><h4>Documented relationship file</h4>
+      <ul class="timeline">${relTimeline(i)}</ul>
+    </div>`;
+  $("#scrim").classList.add("on");$("#drawer").classList.add("on");
+}
+function closeDrawer(){$("#scrim").classList.remove("on");$("#drawer").classList.remove("on");}
+
+function viewMatcher(){
+  if(!state.dealSelId) state.dealSelId="anthropic";
+  const deal=DEALS.find(d=>d.id===state.dealSelId);
+  if(!state.dealSel[deal.id]) state.dealSel[deal.id]={};
+  const sel=state.dealSel[deal.id];
+  // matched = sector appetite overlaps + check >= min
+  const matched = INV.filter(i=> i.sectors.includes(deal.sector) && i.check>=deal.min)
+    .sort((a,b)=> (eligible(b)-eligible(a)) || b.check-a.check);
+  const elig = matched.filter(eligible);
+  const filled = Object.keys(sel).filter(k=>sel[k]).reduce((a,k)=>{const i=INV.find(x=>x.id===+k);return a+(i?i.check:0)},0);
+  const pct=Math.min(100,filled/deal.alloc*100);
+  const selCount=Object.keys(sel).filter(k=>sel[k]).length;
+  const selVel=Math.max(0,...Object.keys(sel).filter(k=>sel[k]).map(k=>INV.find(x=>x.id===+k).vel));
+  const readyCap=elig.reduce((a,i)=>a+i.check,0);
+  const dealCards=DEALS.map(d=>{
+    const m=INV.filter(i=>i.sectors.includes(d.sector)&&i.check>=d.min&&eligible(i)).reduce((a,i)=>a+i.check,0);
+    return `<div class="deal ${d.id===deal.id?"sel":""}" onclick="state.dealSelId='${d.id}';render()">
+      <div class="co">${d.co}</div>
+      <div class="meta">${d.sector} · ${d.round} · ${d.price}</div>
+      <div class="alloc">Allocation ${fmtM(d.alloc)} · min ${fmt$(d.min)} · closes in ${d.window}d</div>
+      <div class="allocbar"><i style="width:${Math.min(100,m/d.alloc*100)}%"></i></div>
+      <div class="alloc">${fmtM(m)} eligible capital ready</div>
+    </div>`;}).join("");
+  const mrows=matched.map(i=>{
+    const ok=eligible(i), on=!!sel[i.id];
+    return `<div class="mrow ${ok?"":"locked"} ${on?"on":""}" onclick="${ok?`toggleSel(${i.id})`:`openDrawer(${i.id})`}">
+      <div class="sel-btn">${on?"✓":""}</div>
+      <div class="grow">
+        <div class="nm">${i.name} <span class="muted" style="font-weight:400">· ${i.type.split(" (")[0]}</span></div>
+        <div class="mt">Appetite: ${i.sectors.join(", ")} · via ${TEAM[i.conn].name}</div>
+        ${ok?"":`<div class="lockmsg">🔒 Relationship not established — cannot present this offering (506(b))</div>`}
+      </div>
+      <div style="text-align:right">
+        <div class="chk">${fmt$(i.check)}</div>
+        <div class="mt">${ok?VELLAB[i.vel]:STAGE[i.stage].lab}</div>
+      </div>
+    </div>`;}).join("");
+  return `
+  <h1 class="page">Deal matcher &amp; allocation fill</h1>
+  <p class="lede">Pick a live SPV. The engine ranks investors whose appetite and check fit — but it will only let you present the deal to investors with an established 506(b) relationship. Select investors to fill the allocation and watch how fast warm, ready capital comes together.</p>
+  <div class="dealgrid">
+    <div>${dealCards}</div>
+    <div class="panel" style="margin:0">
+      <div class="matchhead">
+        <div><div class="bigfill">${fmtM(filled)} <small>/ ${fmtM(deal.alloc)} filled</small></div></div>
+      </div>
+      <div class="allocbar" style="height:12px"><i style="width:${pct}%"></i></div>
+      <div class="metricrow">
+        <div class="m"><div class="v">${selCount}</div><div class="l">investors selected</div></div>
+        <div class="m"><div class="v">${fmtM(readyCap)}</div><div class="l">eligible capital available</div></div>
+        <div class="m"><div class="v">${selCount?VELLAB[selVel]:"—"}</div><div class="l">est. time to close</div></div>
+        <div class="m"><div class="v">${pct>=100?"✓ covered":Math.round(pct)+"%"}</div><div class="l">of allocation</div></div>
+      </div>
+      ${pct>=100?`<div class="elig ok" style="margin-top:0"><span class="i">✓</span><span>Allocation covered from ${selCount} pre-qualified investors, closeable in ${VELLAB[selVel]} — well inside the ${deal.window}-day window.</span></div>`:""}
+      <div style="margin-top:14px">${mrows}</div>
+      <div class="note">Locked rows are matched by fit but are <b>in establishment</b> — under 506(b) no specific deal can be shown until the relationship is established. They represent near-term capacity once the engine completes their relationship file.</div>
+    </div>
+  </div>`;
+}
+function toggleSel(id){
+  const d=state.dealSelId; state.dealSel[d]=state.dealSel[d]||{};
+  state.dealSel[d][id]=!state.dealSel[d][id]; render();
+}
+
+function viewHow(){
+  return `
+  <h1 class="page">How the engine works</h1>
+  <p class="lede">The whole design follows from one fact: Cascade's SPVs are normally 506(b), so it can only show a deal to investors it already has a pre-existing, substantive relationship with. The engine is built to create and document those relationships at scale — before deals exist.</p>
+  <div class="panel"><h2>1 · Find</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists: liquidity events (IPOs, tenders, secondaries), tech wealth and operators, family offices &amp; RIAs, and cap-table holders of the very companies Cascade backs. Each is routed to the team member with the warmest path.</p></div>
+  <div class="panel"><h2>2 · Establish (the 506(b) core)</h2><p class="sub" style="margin:0">Every prospect runs a documented relationship-establishment track — substantive contact, sophistication and accreditation captured, timestamped. Following the <b>Citizen VC</b> precedent, no specific offering is shown until that relationship exists. This is what makes the base legally eligible and is the heart of the engine.</p></div>
+  <div class="panel"><h2>3 · Keep warm</h2><p class="sub" style="margin:0">Between deals, the base is kept engaged with curated context (secondary pricing, why one name over another) so that when an allocation opens, pre-qualified capital can move in days. Speed is the competitive weapon.</p></div>
+  <div class="panel"><h2>4 · Match &amp; fill</h2><p class="sub" style="margin:0">When a deal lands, the engine ranks eligible investors by fit and check, enforces the 506(b) wall, and helps fill the allocation fast from warm capital — the Deal Matcher tab shows this in action.</p></div>
+  <p class="footnote">Synthetic prototype for discussion. 506(b) / Citizen VC logic is illustrative of the product design, not legal advice — specifics to be confirmed with counsel.</p>`;
+}
+
+/* ---------- router ---------- */
+function render(){
+  const v={overview:viewOverview,pipeline:viewPipeline,matcher:viewMatcher,how:viewHow}[state.tab]();
+  $("#main").innerHTML=v;
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  state.tab=b.dataset.tab;
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+});
+render();
+</script>
+</body>
+</html>
