@@ -708,6 +708,20 @@ function viewWarmNetwork(){
 }
 
 /* ---------- competitor map (live SEC Form D) ---------- */
+// Curated starting set of firms comparable to Cascade (late-stage / pre-IPO access,
+// single-asset SPVs, secondaries). Editable — you can scan any name.
+const COMPETITORS=[
+  {n:"137 Ventures",               t:"Late-stage SPV access"},
+  {n:"Goanna Capital",             t:"Late-stage AI / secondary"},
+  {n:"Manhattan Venture Partners", t:"Pre-IPO secondaries + SPVs"},
+  {n:"UpMarket",                   t:"Pre-IPO SPV platform"},
+  {n:"G Squared",                  t:"Direct secondaries"},
+  {n:"Industry Ventures",          t:"Secondaries / FoF"},
+  {n:"StepStone",                  t:"Secondaries / co-invest"},
+  {n:"iCapital",                   t:"Access-fund / feeder sponsor"},
+];
+function pickCompetitor(name){ state.comp.query=name; runCompetitor(); }
+
 function runCompetitor(){
   const c=state.comp; const q=(c.query||"").trim();
   if(!q){ c.error="Enter a competitor name."; render(); return; }
@@ -767,8 +781,10 @@ function viewCompetitor(){
   <h1 class="page">Competitor LP map</h1>
   <p class="lede">Type a rival and pull their public SEC Form D filings live — the fund vehicles, the <b>feeder / distribution channels</b> pooling capital into them, the <b>named people</b> (GPs, officers, signatories, placement agents), and raise sizes. LP names are confidential; this surfaces the <i>channels and people</i> to approach.</p>
   <div class="banner">Public SEC data &mdash; competitive intelligence, not an LP list. Outreach is relationship-building under 506(b), not solicitation. Full firm leadership + verified emails come from the enrichment layer.</div>
+  <div class="ppl" style="margin-bottom:8px"><div class="h">Comparable firms &mdash; click to scan (curated; edit anytime)</div></div>
+  <div class="presets" style="margin-bottom:14px">${COMPETITORS.map(x=>`<button class="preset ${c.query===x.n?"on":""}" onclick="pickCompetitor('${x.n.replace(/'/g,"\\'")}')" title="${x.t}">${x.n}</button>`).join("")}</div>
   <div class="finderbar">
-    <input id="cq" placeholder="Competitor name — e.g. 137 Ventures" value="${c.query}" oninput="state.comp.query=this.value" />
+    <input id="cq" placeholder="…or type any competitor — e.g. 137 Ventures" value="${c.query}" oninput="state.comp.query=this.value" />
     <button class="runbtn" ${c.loading?"disabled":""} onclick="runCompetitor()">${c.loading?"Scanning…":"Scan SEC filings"}</button>
   </div>
   ${body}`;
