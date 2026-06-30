@@ -192,6 +192,20 @@
   .spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);
     border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;margin-right:8px}
   @keyframes sp{to{transform:rotate(360deg)}}
+  .finderbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .finderbar input{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px 12px;font-size:13px}
+  .finderbar #fq{flex:1;min-width:220px}
+  .finderbar .stinput{width:120px;text-transform:uppercase}
+  .netitem{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #1d1f23}
+  .netitem:last-child{border-bottom:none}
+  .netitem .grow{flex:1;min-width:0}
+  .netitem .nn{font-weight:600}
+  .netitem .nr{color:var(--muted);font-size:12px}
+  .netitem .via{font-size:11px;color:var(--accent)}
+  .refform{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+  .refform input,.refform select{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:9px 11px;font-size:13px}
+  .refform input.rn{flex:1;min-width:180px}
+  .okmsg{color:var(--green);font-size:12.5px;margin-top:10px}
   .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .howcol{columns:2;column-gap:26px}
@@ -219,6 +233,7 @@
     <nav class="tabs" id="tabs">
       <button data-tab="overview" class="active">Overview</button>
       <button data-tab="pipeline">Investor Pipeline</button>
+      <button data-tab="warm">Warm Network</button>
       <button data-tab="finder">Prospect Finder</button>
       <button data-tab="matcher">Deal Matcher</button>
       <button data-tab="how">How it works</button>
@@ -301,8 +316,9 @@ const fmt$ = n=> "$"+Math.round(n).toLocaleString("en-US");
 const fmtM = n=> "$"+(n/1e6).toFixed(n%1e6?1:0)+"M";
 const sigDot = s=>`<span class="sigdot" style="background:${SIG[s].color}"></span>`;
 var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:"",
-  finder:{preset:"ai-funds", loading:false, error:null, data:null, added:{}}};
+  finder:{preset:"family-office", query:"", stateF:"", loading:false, error:null, data:null, added:{}}};
 var nextInvId = 1000;
+var addedNet = {};
 
 /* ---------- views ---------- */
 function viewOverview(){
@@ -478,7 +494,7 @@ function viewMatcher(){
       </div>
     </div>`;}).join("");
   return `
-  <div class="eyebrow">04 — Allocation</div>
+  <div class="eyebrow">05 — Allocation</div>
   <h1 class="page">Deal matcher &amp; allocation fill</h1>
   <p class="lede">Pick a live SPV. The engine ranks investors whose appetite and check fit — but it will only let you present the deal to investors with an established 506(b) relationship. Select investors to fill the allocation and watch how fast warm, ready capital comes together.</p>
   <div class="dealgrid">
@@ -507,7 +523,7 @@ function toggleSel(id){
 
 function viewHow(){
   return `
-  <div class="eyebrow">05 — Methodology</div>
+  <div class="eyebrow">06 — Methodology</div>
   <h1 class="page">How the engine works</h1>
   <p class="lede">The whole design follows from one fact: Cascade's SPVs are normally 506(b), so it can only show a deal to investors it already has a pre-existing, substantive relationship with. The engine is built to create and document those relationships at scale — before deals exist.</p>
   <div class="panel"><h2>1 · Find</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists: liquidity events (IPOs, tenders, secondaries), tech wealth and operators, family offices &amp; RIAs, and cap-table holders of the very companies Cascade backs. Each is routed to the team member with the warmest path.</p></div>
@@ -517,20 +533,22 @@ function viewHow(){
   <p class="footnote">Synthetic prototype for discussion. 506(b) / Citizen VC logic is illustrative of the product design, not legal advice — specifics to be confirmed with counsel.</p>`;
 }
 
-/* ---------- prospect finder (live SEC data) ---------- */
+/* ---------- prospect finder (live SEC IAPD: RIAs + family offices) ---------- */
 const FPRESETS=[
-  {k:"ai-funds",       label:"AI-focused funds"},
-  {k:"family-offices", label:"Family offices"},
-  {k:"spv-sponsors",   label:"SPV sponsors"},
-  {k:"ai-ipos",        label:"Recent AI IPO filers"},
+  {k:"family-office",  label:"Family offices"},
+  {k:"mfo",            label:"Multi-family offices"},
+  {k:"private-wealth", label:"RIAs — private wealth"},
+  {k:"alternatives",   label:"RIAs — alternatives"},
 ];
-const PRESET_SIG={ "ai-funds":"syndicate", "family-offices":"familyoffice", "spv-sponsors":"syndicate", "ai-ipos":"liquidity" };
 
-function setPreset(k){ state.finder.preset=k; render(); }
+function setPreset(k){ state.finder.preset=k; state.finder.query=""; render(); }
 
 function runFinder(){
   const f=state.finder; f.loading=true; f.error=null; render();
-  fetch("/api/find-prospects?preset="+encodeURIComponent(f.preset))
+  const qs="preset="+encodeURIComponent(f.preset)
+    +(f.query?"&query="+encodeURIComponent(f.query):"")
+    +(f.stateF?"&state="+encodeURIComponent(f.stateF):"");
+  fetch("/api/find-prospects?"+qs)
     .then(r=> r.json().then(j=> r.ok ? j : Promise.reject(new Error(j.error||("HTTP "+r.status)))))
     .then(d=>{ f.loading=false; f.data=d; f.added={}; render(); })
     .catch(e=>{ f.loading=false; f.error=String(e&&e.message||e); render(); });
@@ -538,50 +556,44 @@ function runFinder(){
 
 function ringClass(s){ return s>=75?"":(s>=55?"mid":"low"); }
 
-function prospectCard(p, idx){
+function firmCard(p, idx){
   const added=!!state.finder.added[idx];
-  const chips=[];
-  if(p.exemption&&p.exemption!=="—") chips.push(`<span class="chip ${p.exemption==="506(b)"?"b":""}">${p.exemption}</span>`);
-  chips.push(`<span class="chip">${p.form} · ${p.date}</span>`);
-  if(p.location||p.incState) chips.push(`<span class="chip">${p.location||("Inc. "+p.incState)}</span>`);
-  if(p.offering&&p.offering.fundType) chips.push(`<span class="chip">${p.offering.fundType}</span>`);
-  if(p.offering&&p.offering.investorCount) chips.push(`<span class="chip">${p.offering.investorCount} investors</span>`);
-  if(p.offering&&p.offering.allAccredited) chips.push(`<span class="chip g">All accredited</span>`);
-  if(p.offering&&p.offering.sold) chips.push(`<span class="chip">${fmtM(p.offering.sold)} raised</span>`);
-  if(p.offering&&p.offering.minInvestment) chips.push(`<span class="chip">min ${fmt$(p.offering.minInvestment)}</span>`);
-  let ppl="";
-  if(p.principals&&p.principals.length){
-    ppl=`<div class="ppl"><div class="h">Named principals (warm-path targets)</div>`+
-      p.principals.slice(0,4).map(x=>`<div class="person"><b>${x.name}</b>${x.roles&&x.roles.length?` <span class="role">— ${x.roles.join(", ")}</span>`:""}</div>`).join("")+
-      `</div>`;
-  }
+  const loc=[p.city,p.state].filter(Boolean).join(", ")||p.country||"—";
+  const chips=[`<span class="chip g">SEC-registered</span>`];
+  if(loc) chips.push(`<span class="chip">${loc}</span>`);
+  if(p.branches) chips.push(`<span class="chip">${p.branches} office${p.branches>1?"s":""}</span>`);
+  if(p.sec) chips.push(`<span class="chip">${p.sec}</span>`);
+  else if(p.crd) chips.push(`<span class="chip">CRD ${p.crd}</span>`);
+  let alt="";
+  if(p.otherNames&&p.otherNames.length) alt=`<div class="ppl"><div class="h">Also known as</div><div class="person">${p.otherNames.join(" · ")}</div></div>`;
   return `<div class="pcard">
     <div class="ring ${ringClass(p.score)}">${p.score}</div>
     <div class="pgrow">
-      <div class="pname">${p.name||"(unnamed filer)"}</div>
-      <div class="pmeta">Sourced from public SEC filing · fit score ${p.score}/100</div>
+      <div class="pname">${p.name}</div>
+      <div class="pmeta">Registered investment adviser / family office · fit score ${p.score}/100</div>
       <div class="chips">${chips.join("")}</div>
-      ${ppl}
+      ${alt}
     </div>
     <div class="paction">
       <button class="addbtn ${added?"done":""}" ${added?"":`onclick="addFromFinder(${idx})"`}>${added?"✓ Added":"Add to pipeline →"}</button>
-      <a class="plink" href="${p.filingUrl}" target="_blank" rel="noopener">View SEC filing ↗</a>
+      <a class="plink" href="${p.profileUrl}" target="_blank" rel="noopener">View IAPD profile ↗</a>
     </div>
   </div>`;
 }
 
 function addFromFinder(idx){
   const p=state.finder.data.prospects[idx];
-  const contact=(p.principals&&p.principals[0]&&p.principals[0].name)||p.name;
+  const loc=[p.city,p.state].filter(Boolean).join(", ")||p.country||"—";
   const since=new Date().toISOString().slice(0,7);
+  const isFO=state.finder.preset==="family-office"||state.finder.preset==="mfo";
   INV.push({
-    id:nextInvId++, name:contact,
-    type:p.principals&&p.principals.length?("Principal · "+p.name):((p.offering&&p.offering.fundType)||(p.form+" filer")),
-    loc:p.location||p.incState||"—",
-    sig:PRESET_SIG[state.finder.preset]||"syndicate",
-    sigTxt:`SEC ${p.form} · ${p.date}${p.exemption&&p.exemption!=="—"?" · "+p.exemption:""}`,
+    id:nextInvId++, name:p.name,
+    type:isFO?"Family office":"RIA / wealth adviser",
+    loc,
+    sig:"familyoffice",
+    sigTxt:`SEC IAPD${p.sec?" · "+p.sec:(p.crd?" · CRD "+p.crd:"")}`,
     conn:"inbound", acc:"Unverified", stage:"new",
-    check:(p.offering&&p.offering.minInvestment)||0, vel:14,
+    check:0, vel:14,
     sectors:["Foundation Models","AI Infra","AI Apps"],
     prior:0, since, touch:0,
   });
@@ -594,31 +606,108 @@ function viewFinder(){
   const presets=FPRESETS.map(x=>`<button class="preset ${f.preset===x.k?"on":""}" onclick="setPreset('${x.k}')">${x.label}</button>`).join("");
   let body="";
   if(isFile){
-    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link (e.g. <b>cascade-weld.vercel.app</b>) to query the SEC — opening the raw file locally can’t reach the API.</div>`;
+    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link (e.g. <b>cascade-weld.vercel.app</b>) to query the SEC registry — opening the raw file locally can’t reach the API.</div>`;
   } else if(f.loading){
-    body=`<div class="panel"><span class="spin"></span>Querying SEC EDGAR live…</div>`;
+    body=`<div class="panel"><span class="spin"></span>Querying the SEC adviser registry live…</div>`;
   } else if(f.error){
-    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>Couldn’t reach the SEC API: ${f.error}. Try again in a moment.</span></div>`;
+    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>Couldn’t reach the SEC IAPD API: ${f.error}. Try again in a moment.</span></div>`;
   } else if(f.data){
     const ps=f.data.prospects||[];
-    body=`<div class="muted" style="margin:0 0 12px">${ps.length} filers · ${f.data.label} · as of ${(f.data.asOf||"").slice(0,10)}</div>`+
-      (ps.length?ps.map((p,i)=>prospectCard(p,i)).join(""):`<div class="note">No filings matched in the last 12 months. Try another source.</div>`);
+    body=`<div class="muted" style="margin:0 0 12px">${ps.length} firms · ${f.data.label}${f.data.query?` · &ldquo;${f.data.query}&rdquo;`:""} · as of ${(f.data.asOf||"").slice(0,10)}</div>`+
+      (ps.length?ps.map((p,i)=>firmCard(p,i)).join(""):`<div class="note">No active firms matched. Try another channel or term.</div>`);
   } else {
-    body=`<div class="note">Pick a source above and run a live search. Results come straight from public SEC EDGAR filings — real entities, real named principals, no synthetic data.</div>`;
+    body=`<div class="note">Pick a channel, then run a live search. Results come straight from the public SEC Investment Adviser registry — real, currently-registered RIAs and family offices.</div>`;
   }
   return `
-  <div class="eyebrow">03 — Live Sourcing</div>
-  <h1 class="page">Prospect finder</h1>
-  <p class="lede">Surfaces real prospective investors from public SEC filings — AI-focused funds and their named principals, family offices, SPV sponsors, and recent liquidity events. Each enters the pipeline as a <b>new prospect</b> to begin relationship-building.</p>
-  <div class="banner">Live, public SEC EDGAR data. These are sourcing signals to begin a relationship under 506(b) — not an offer or solicitation, and accreditation is never assumed.</div>
+  <div class="eyebrow">04 — Live Sourcing</div>
+  <h1 class="page">Prospect finder &mdash; RIAs &amp; family offices</h1>
+  <p class="lede">Surfaces real allocators from the public <b>SEC Investment Adviser registry (IAPD)</b> — registered RIAs and family offices, the channels that actually invest in pre-IPO SPVs. Each enters the pipeline as a <b>new prospect</b> to begin relationship-building.</p>
+  <div class="banner">Live, public SEC IAPD data &mdash; real registered firms. Sourcing signals to begin a relationship under 506(b); not an offer or solicitation, accreditation never assumed. Richer mandate / AUM / contact data (e.g. FINTRX) is the paid upgrade that layers on top.</div>
   <div class="presets">${presets}</div>
-  <div style="margin-bottom:18px"><button class="runbtn" ${f.loading?"disabled":""} onclick="runFinder()">${f.loading?"Searching…":"Search SEC (live)"}</button></div>
+  <div class="finderbar">
+    <input id="fq" placeholder="or search any term — e.g. private capital" value="${f.query}" oninput="state.finder.query=this.value" />
+    <input id="fs" class="stinput" placeholder="State e.g. NY" value="${f.stateF}" oninput="state.finder.stateF=this.value.toUpperCase()" maxlength="2" />
+    <button class="runbtn" ${f.loading?"disabled":""} onclick="runFinder()">${f.loading?"Searching…":"Search SEC registry"}</button>
+  </div>
   ${body}`;
+}
+
+/* ---------- warm network & referrals (channel 1) ---------- */
+const NETWORK=[
+  {name:"Jonathan Reyes",   via:"berg",   role:"Ex-York Capital PM · recently liquid",        est:750000, sig:"techwealth"},
+  {name:"Robert Vance",     via:"berg",   role:"Hedge-fund allocator · Greenwich",            est:1000000, sig:"techwealth"},
+  {name:"Karen Liu",        via:"weis",   role:"Repeat pre-IPO secondary buyer",              est:300000, sig:"liquidity"},
+  {name:"Marco Bianchi",    via:"weis",   role:"Family-office CIO · prior SPV LP",            est:500000, sig:"familyoffice"},
+  {name:"Priya Anand",      via:"jerry",  role:"Ex-Databricks VP · post-tender liquidity",     est:250000, sig:"captable"},
+  {name:"Sam Okoro",        via:"jerry",  role:"Operator-angel · AI infra focus",             est:200000, sig:"captable"},
+  {name:"Helen Marsh",      via:"dustin", role:"RIA · ~30 accredited clients",                est:400000, sig:"familyoffice"},
+  {name:"Greg Tran",        via:"dustin", role:"Wealth adviser · alternatives sleeve",        est:300000, sig:"familyoffice"},
+];
+var refMsg="";
+
+function routeNetwork(idx){
+  const c=NETWORK[idx]; if(!c||addedNet[idx]) return;
+  const since=new Date().toISOString().slice(0,7);
+  INV.push({ id:nextInvId++, name:c.name, type:c.role.split(" · ")[0], loc:"—",
+    sig:c.sig, sigTxt:`Warm intro · ${TEAM[c.via].net}`, conn:c.via, acc:"Unverified",
+    stage:"new", check:c.est, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    prior:0, since, touch:0 });
+  addedNet[idx]=true; render();
+}
+
+function logReferral(){
+  const nm=(document.getElementById("refName")||{}).value||"";
+  const by=(document.getElementById("refBy")||{}).value||"";
+  const ck=parseInt(((document.getElementById("refCheck")||{}).value||"").replace(/[^0-9]/g,""),10)||0;
+  if(!nm.trim()){ refMsg="Enter a name to log a referral."; render(); return; }
+  const since=new Date().toISOString().slice(0,7);
+  INV.push({ id:nextInvId++, name:nm.trim(), type:"Referral", loc:"—",
+    sig:"familyoffice", sigTxt:`Referred by ${by||"existing investor"}`, conn:"inbound",
+    acc:"Unverified", stage:"new", check:ck, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    prior:0, since, touch:0 });
+  refMsg=`Added ${nm.trim()} as a new prospect (referred by ${by||"existing investor"}). Find them in the pipeline.`;
+  render();
+}
+
+function viewWarmNetwork(){
+  const groups={};
+  NETWORK.forEach((c,i)=>{ (groups[c.via]=groups[c.via]||[]).push({...c,_i:i}); });
+  const netHtml=Object.keys(groups).map(via=>`
+    <div style="margin-bottom:14px">
+      <div class="ppl"><div class="h">${TEAM[via].name} &mdash; ${TEAM[via].net}</div></div>
+      ${groups[via].map(c=>`<div class="netitem">
+        <div class="grow"><div class="nn">${c.name}</div><div class="nr">${c.role}</div></div>
+        <div style="text-align:right"><div class="chk">${fmt$(c.est)}</div><div class="via">warm intro</div></div>
+        <button class="addbtn ${addedNet[c._i]?"done":""}" ${addedNet[c._i]?"":`onclick="routeNetwork(${c._i})"`}>${addedNet[c._i]?"✓ Routed":"Route to track →"}</button>
+      </div>`).join("")}
+    </div>`).join("");
+  const actives=INV.filter(i=>i.stage==="active");
+  const opts=actives.map(i=>`<option>${i.name}</option>`).join("");
+  return `
+  <div class="eyebrow">03 — Warm Network</div>
+  <h1 class="page">Warm network &amp; referrals</h1>
+  <p class="lede">The highest-conversion channel by far. These prospects come from the partners&rsquo; own relationships and from existing-investor referrals — not scraped lists — so they enter the pipeline already warm. Route each into the 506(b) relationship track.</p>
+  <div class="panel">
+    <h2>Mine the team&rsquo;s network</h2>
+    <p class="sub">Likely-qualified contacts surfaced from each partner&rsquo;s network. (Synthetic for the prototype; in production this imports from the team&rsquo;s contacts and CRM.)</p>
+    ${netHtml}
+  </div>
+  <div class="panel">
+    <h2>Capture a referral</h2>
+    <p class="sub">Every happy investor is a source of two or three more. Log a referral and it enters the pipeline as a new prospect, with the referrer recorded.</p>
+    <div class="refform">
+      <input class="rn" id="refName" placeholder="Referred prospect name" />
+      <select id="refBy"><option value="">Referred by…</option>${opts}</select>
+      <input id="refCheck" placeholder="Est. check $" style="width:140px" />
+      <button class="runbtn" onclick="logReferral()">Log referral</button>
+    </div>
+    ${refMsg?`<div class="okmsg">✓ ${refMsg}</div>`:""}
+  </div>`;
 }
 
 /* ---------- router ---------- */
 function render(){
-  const v={overview:viewOverview,pipeline:viewPipeline,finder:viewFinder,matcher:viewMatcher,how:viewHow}[state.tab]();
+  const v={overview:viewOverview,pipeline:viewPipeline,warm:viewWarmNetwork,finder:viewFinder,matcher:viewMatcher,how:viewHow}[state.tab]();
   $("#main").innerHTML=v;
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
