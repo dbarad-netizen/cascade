@@ -235,6 +235,7 @@
       <button data-tab="pipeline">Investor Pipeline</button>
       <button data-tab="warm">Warm Network</button>
       <button data-tab="finder">Prospect Finder</button>
+      <button data-tab="competitor">Competitor Map</button>
       <button data-tab="matcher">Deal Matcher</button>
       <button data-tab="how">How it works</button>
     </nav>
@@ -316,7 +317,8 @@ const fmt$ = n=> "$"+Math.round(n).toLocaleString("en-US");
 const fmtM = n=> "$"+(n/1e6).toFixed(n%1e6?1:0)+"M";
 const sigDot = s=>`<span class="sigdot" style="background:${SIG[s].color}"></span>`;
 var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:"",
-  finder:{preset:"family-office", query:"", stateF:"", loading:false, error:null, data:null, added:{}}};
+  finder:{preset:"family-office", query:"", stateF:"", loading:false, error:null, data:null, added:{}},
+  comp:{query:"", loading:false, error:null, data:null, added:{}}};
 var nextInvId = 1000;
 var addedNet = {};
 
@@ -494,7 +496,7 @@ function viewMatcher(){
       </div>
     </div>`;}).join("");
   return `
-  <div class="eyebrow">05 — Allocation</div>
+  <div class="eyebrow">06 — Allocation</div>
   <h1 class="page">Deal matcher &amp; allocation fill</h1>
   <p class="lede">Pick a live SPV. The engine ranks investors whose appetite and check fit — but it will only let you present the deal to investors with an established 506(b) relationship. Select investors to fill the allocation and watch how fast warm, ready capital comes together.</p>
   <div class="dealgrid">
@@ -523,7 +525,7 @@ function toggleSel(id){
 
 function viewHow(){
   return `
-  <div class="eyebrow">06 — Methodology</div>
+  <div class="eyebrow">07 — Methodology</div>
   <h1 class="page">How the engine works</h1>
   <p class="lede">The whole design follows from one fact: Cascade's SPVs are normally 506(b), so it can only show a deal to investors it already has a pre-existing, substantive relationship with. The engine is built to create and document those relationships at scale — before deals exist.</p>
   <div class="panel"><h2>1 · Find</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists: liquidity events (IPOs, tenders, secondaries), tech wealth and operators, family offices &amp; RIAs, and cap-table holders of the very companies Cascade backs. Each is routed to the team member with the warmest path.</p></div>
@@ -705,9 +707,76 @@ function viewWarmNetwork(){
   </div>`;
 }
 
+/* ---------- competitor map (live SEC Form D) ---------- */
+function runCompetitor(){
+  const c=state.comp; const q=(c.query||"").trim();
+  if(!q){ c.error="Enter a competitor name."; render(); return; }
+  c.loading=true; c.error=null; render();
+  fetch("/api/competitor-map?query="+encodeURIComponent(q))
+    .then(r=> r.json().then(j=> r.ok ? j : Promise.reject(new Error(j.error||("HTTP "+r.status)))))
+    .then(d=>{ c.loading=false; c.data=d; c.added={}; render(); })
+    .catch(e=>{ c.loading=false; c.error=String(e&&e.message||e); render(); });
+}
+function addPersonComp(idx){
+  const p=state.comp.data.people[idx]; if(!p) return;
+  const since=new Date().toISOString().slice(0,7);
+  INV.push({ id:nextInvId++, name:p.name, type:(p.roles&&p.roles[0])||"Contact", loc:"—",
+    sig:p.channel?"familyoffice":"syndicate",
+    sigTxt:`${p.channel?"Channel":"Competitor"} · ${p.vehicle}`, conn:"inbound",
+    acc:"Unverified", stage:"new", check:0, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    prior:0, since, touch:0 });
+  state.comp.added[idx]=true; render();
+}
+function viewCompetitor(){
+  const c=state.comp; const isFile=location.protocol==="file:";
+  let body="";
+  if(isFile){
+    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link to query the SEC — opening the raw file locally can’t reach the API.</div>`;
+  } else if(c.loading){
+    body=`<div class="panel"><span class="spin"></span>Scanning SEC Form D filings live…</div>`;
+  } else if(c.error){
+    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>${c.error}</span></div>`;
+  } else if(c.data){
+    const d=c.data;
+    if(!d.totalFilings){ body=`<div class="note">No Form D filings matched &ldquo;${d.query}&rdquo;. Their vehicles may file under differently-named entities — try the sponsor&rsquo;s fund names, or check their Form ADV first.</div>`; }
+    else {
+      const feeders=(d.feeders||[]).map(f=>`<div class="pcard"><div class="pgrow">
+        <div class="pname">${f.name}</div>
+        <div class="pmeta">${f.sponsor?("Channel: <b style='color:var(--accent)'>"+f.sponsor+"</b> · "):""}${f.exemption||""} ${f.date?("· "+f.date):""}</div>
+        <div class="chips">${f.sold?`<span class="chip">${fmtM(f.sold)} raised</span>`:""}${f.investors?`<span class="chip">${f.investors} investors</span>`:""}</div>
+      </div></div>`).join("")||`<div class="note">No distinct feeder/channel vehicles detected in the matched filings.</div>`;
+      const people=(d.people||[]).slice(0,40).map((p,i)=>{
+        const added=!!c.added[i];
+        return `<div class="netitem">
+          <div class="grow"><div class="nn">${p.name} ${p.channel?'<span class="chip b" style="margin-left:6px">outreach target</span>':'<span class="chip" style="margin-left:6px">competitor officer</span>'}</div>
+            <div class="nr">${(p.roles||[]).join(", ")||"—"} · ${p.vehicle}</div></div>
+          <button class="addbtn ${added?"done":""}" ${added?"":`onclick="addPersonComp(${i})"`}>${added?"✓ Added":"Add to pipeline →"}</button>
+        </div>`;}).join("")||`<div class="note">No named individuals in the enriched filings.</div>`;
+      const agents=(d.placementAgents||[]).map(a=>`<span class="chip">${a.name}${a.crd?` · CRD ${a.crd}`:""}</span>`).join(" ")||`<span class="muted">none disclosed</span>`;
+      body=`
+        <div class="muted" style="margin:0 0 12px">${d.totalFilings} Form D filings · ${(d.counts&&d.counts.fund)||0} funds · ${(d.counts&&d.counts.feeder)||0} feeders · ${(d.counts&&d.counts.spv)||0} SPVs · as of ${(d.asOf||"").slice(0,10)}</div>
+        <div class="panel"><h2>Distribution channels &amp; feeders</h2><p class="sub">Vehicles that pool an outside firm&rsquo;s clients into the competitor — the LP channels to court.</p>${feeders}</div>
+        <div class="panel"><h2>Named people for outreach</h2><p class="sub">Real individuals from the filings. <b>Outreach targets</b> sit at the distribution channels; <b>competitor officers</b> are intel. Emails are appended by the enrichment layer.</p>${people}</div>
+        <div class="panel" style="margin-bottom:0"><h2>Placement agents</h2><p class="sub">Brokers paid to sell the offerings — they hold LP relationships and can be a channel.</p>${agents}</div>`;
+    }
+  } else {
+    body=`<div class="note">Enter a competitor (e.g. <b>137 Ventures</b>) and run a live scan of their public SEC Form D filings.</div>`;
+  }
+  return `
+  <div class="eyebrow">05 — Competitive Intelligence</div>
+  <h1 class="page">Competitor LP map</h1>
+  <p class="lede">Type a rival and pull their public SEC Form D filings live — the fund vehicles, the <b>feeder / distribution channels</b> pooling capital into them, the <b>named people</b> (GPs, officers, signatories, placement agents), and raise sizes. LP names are confidential; this surfaces the <i>channels and people</i> to approach.</p>
+  <div class="banner">Public SEC data &mdash; competitive intelligence, not an LP list. Outreach is relationship-building under 506(b), not solicitation. Full firm leadership + verified emails come from the enrichment layer.</div>
+  <div class="finderbar">
+    <input id="cq" placeholder="Competitor name — e.g. 137 Ventures" value="${c.query}" oninput="state.comp.query=this.value" />
+    <button class="runbtn" ${c.loading?"disabled":""} onclick="runCompetitor()">${c.loading?"Scanning…":"Scan SEC filings"}</button>
+  </div>
+  ${body}`;
+}
+
 /* ---------- router ---------- */
 function render(){
-  const v={overview:viewOverview,pipeline:viewPipeline,warm:viewWarmNetwork,finder:viewFinder,matcher:viewMatcher,how:viewHow}[state.tab]();
+  const v={overview:viewOverview,pipeline:viewPipeline,warm:viewWarmNetwork,finder:viewFinder,competitor:viewCompetitor,matcher:viewMatcher,how:viewHow}[state.tab]();
   $("#main").innerHTML=v;
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
