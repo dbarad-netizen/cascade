@@ -1,16 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cascade Venture Capital · Investor Engine</title>
-<meta name="theme-color" content="#0a0a0a" />
+<meta name="theme-color" content="#0a0a0a">
 <style>
   :root{
     --bg:#0a0a0a; --panel:#101113; --panel2:#15161a; --line:#23252a;
     --txt:#f4f4f2; --muted:#8c9097; --faint:#5a5e66;
     --accent:#6ea3d6; --accent2:#4d7ba8; --gold:#c6a96a;
     --green:#5cbf8d; --amber:#d4b162; --red:#d97b7b; --lock:#6b7076;
+    --hnw:#d48ac0;
     --shadow:0 10px 36px rgba(0,0,0,.55);
   }
   *{box-sizing:border-box}
@@ -30,9 +30,9 @@
   .est .yr{color:var(--faint);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
   .pill{font-size:10px;color:var(--muted);border:1px solid var(--line);background:var(--panel2);
     padding:5px 11px;border-radius:999px;letter-spacing:.12em;text-transform:uppercase}
-  nav.tabs{display:flex;gap:2px;padding-bottom:0}
+  nav.tabs{display:flex;gap:2px;padding-bottom:0;flex-wrap:wrap}
   nav.tabs button{background:none;border:none;color:var(--muted);font-size:11px;font-weight:600;
-    padding:12px 15px;cursor:pointer;border-bottom:1px solid transparent;letter-spacing:.12em;text-transform:uppercase}
+    padding:12px 13px;cursor:pointer;border-bottom:1px solid transparent;letter-spacing:.12em;text-transform:uppercase}
   nav.tabs button:hover{color:var(--txt)}
   nav.tabs button.active{color:var(--txt);border-bottom-color:var(--accent)}
 
@@ -48,6 +48,7 @@
   .kpi .d{font-size:11px;margin-top:7px;color:var(--faint)}
   .kpi.accent .v{color:var(--accent)}
   .kpi.gold .v{color:var(--gold)}
+  .kpi.hnw .v{color:var(--hnw)}
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
   .panel h2{margin:0 0 4px;font-size:15px}
@@ -64,6 +65,13 @@
   .fstep.s-established .n{color:var(--accent)}
   .fstep.s-active .n{color:var(--green)}
   .arrow{color:var(--faint);text-align:center;font-size:18px}
+
+  /* segment mix */
+  .segrow{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+  .segrow .sl{flex:none;width:170px;font-size:12.5px;color:var(--muted)}
+  .segrow .sb{flex:1;height:10px;border-radius:6px;background:#1d1f23;overflow:hidden}
+  .segrow .sb i{display:block;height:100%;border-radius:6px}
+  .segrow .sv{flex:none;width:120px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
 
   /* table */
   table{width:100%;border-collapse:collapse}
@@ -84,6 +92,9 @@
   .b-established{color:var(--accent);background:#0f1d2b;border:1px solid #1d3a55}
   .b-active{color:var(--green);background:#0f241a;border:1px solid #1c4030}
   .chk{font-variant-numeric:tabular-nums;font-weight:600}
+  .tier{font-size:10.5px;color:var(--faint)}
+  .tier.core{color:var(--gold)}
+  .tier.sel{color:var(--accent)}
   .right{text-align:right}
   .filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
   .filterbar select,.filterbar input{background:var(--panel2);border:1px solid var(--line);color:var(--txt);
@@ -160,11 +171,13 @@
     padding:9px 13px;font-size:12.5px;cursor:pointer;font-weight:600}
   .preset:hover{color:var(--txt)}
   .preset.on{border-color:var(--accent);color:var(--txt);background:#12161b}
+  .preset.hnwp.on{border-color:var(--hnw)}
   .runbtn{background:var(--accent);border:none;color:#07121c;font-weight:700;border-radius:8px;
     padding:10px 16px;font-size:13px;cursor:pointer;letter-spacing:.02em}
   .runbtn:disabled{opacity:.55;cursor:default}
   .banner{background:#141517;border:1px solid var(--line);border-left:3px solid var(--accent);
     border-radius:8px;padding:11px 14px;color:var(--muted);font-size:12px;margin:0 0 16px}
+  .banner.hnwb{border-left-color:var(--hnw)}
   .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;
     display:flex;gap:16px;align-items:flex-start}
   .ring{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -178,6 +191,7 @@
   .chip{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--muted);background:var(--panel2)}
   .chip.b{color:var(--accent);border-color:#27425c}
   .chip.g{color:var(--green);border-color:#1c4030}
+  .chip.p{color:var(--hnw);border-color:#4a2c42}
   .ppl{margin-top:10px;font-size:12.5px}
   .ppl .h{color:var(--faint);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
   .ppl .person{color:var(--txt)}
@@ -214,6 +228,17 @@
   .seclist{font-size:12px;color:var(--muted)}
   .warm{font-size:12px}
   .warm b{color:var(--txt)}
+  /* hnw channels */
+  .chgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:880px){.chgrid{grid-template-columns:1fr}}
+  .chcard{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .chcard .cn{font-weight:700}
+  .chcard .cd{color:var(--muted);font-size:12.5px;flex:1}
+  .evrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1d1f23}
+  .evrow:last-child{border-bottom:none}
+  .evrow .co{font-weight:700;flex:none;width:110px}
+  .evrow .ed{flex:1;color:var(--muted);font-size:12.5px}
+  .evrow .ew{flex:none;font-size:11px;color:var(--faint)}
 </style>
 </head>
 <body>
@@ -227,13 +252,14 @@
       </div>
       <div class="est">
         <span class="yr">Est. 2024</span>
-        <span class="pill">Prototype</span>
+        <span class="pill">Prototype v2 · HNW</span>
       </div>
     </div>
     <nav class="tabs" id="tabs">
       <button data-tab="overview" class="active">Overview</button>
       <button data-tab="pipeline">Investor Pipeline</button>
       <button data-tab="warm">Warm Network</button>
+      <button data-tab="hnw">HNW Channels</button>
       <button data-tab="finder">Prospect Finder</button>
       <button data-tab="competitor">Competitor Map</button>
       <button data-tab="matcher">Deal Matcher</button>
@@ -250,63 +276,81 @@
 <script>
 /* ---------- synthetic data ---------- */
 const TEAM = {
-  berg:   {name:"Matt Berg",      net:"Wall Street / hedge-fund LPs"},
-  weis:   {name:"Matt Weisbarth", net:"Pre-IPO secondary network"},
-  jerry:  {name:"Jerry Weitzman", net:"Databricks / operator network"},
+  berg:   {name:"Matt Berg",       net:"Wall Street / hedge-fund LPs"},
+  weis:   {name:"Matt Weisbarth",  net:"Pre-IPO secondary network"},
+  jerry:  {name:"Jerry Weitzman",  net:"Databricks / operator network"},
   dustin: {name:"Dustin McCormick",net:"RIA / wealth-management network"},
   inbound:{name:"Inbound / referral", net:"Existing-investor referral"}
 };
 const SIG = {
-  liquidity:{label:"Liquidity event", color:"#d8b25b"},
-  techwealth:{label:"Tech wealth", color:"#5ba8e6"},
-  familyoffice:{label:"Family office", color:"#9b8cf0"},
-  captable:{label:"Cap-table holder", color:"#4ec98a"},
-  syndicate:{label:"Syndicate member", color:"#e08a5b"},
+  liquidity:  {label:"Liquidity event",     color:"#d8b25b"},
+  techwealth: {label:"Tech wealth",         color:"#5ba8e6"},
+  familyoffice:{label:"Family office / RIA",color:"#9b8cf0"},
+  captable:   {label:"Cap-table holder",    color:"#4ec98a"},
+  syndicate:  {label:"Syndicate member",    color:"#e08a5b"},
+  profwealth: {label:"Professional wealth", color:"#d48ac0"},
 };
-// stages: new -> establishing -> established -> active   (eligible = established|active)
+const SEGS = {
+  med:"Medicine", law:"Law", re:"Real estate", tech:"Tech professional",
+  fin:"Finance", inst:"Institutional / channel"
+};
+const SEGCOLOR = {med:"#d48ac0", law:"#c6a96a", re:"#e08a5b", tech:"#5ba8e6", fin:"#5cbf8d", inst:"#9b8cf0"};
+// HNW individual = everything except institutional / channel
+const isHNW = (i)=> i.seg && i.seg!=="inst";
+
+// stages: new -> establishing -> established -> active (eligible = established|active)
 let INV = [
-  {id:1, name:"Helena Voss", type:"Family Office (single)", loc:"Greenwich, CT", sig:"familyoffice", sigTxt:"$400M SFO, AI allocation mandate", conn:"berg", acc:"QP", stage:"active", check:500000, vel:3, sectors:["Foundation Models","AI Infra"], prior:5, since:"2024-09", touch:6},
-  {id:2, name:"Marcus Lindqvist", type:"Tech Exec (ex-Stripe)", loc:"San Francisco", sig:"liquidity", sigTxt:"Secondary sale, Stripe — Apr 2026", conn:"weis", acc:"Accredited", stage:"active", check:150000, vel:3, sectors:["AI Apps","Dev Tools"], prior:3, since:"2024-11", touch:9},
-  {id:3, name:"Priya Nadkarni", type:"Operator (ex-Databricks)", loc:"Seattle", sig:"captable", sigTxt:"Databricks cap-table holder", conn:"jerry", acc:"QP", stage:"active", check:250000, vel:3, sectors:["AI Infra","Foundation Models"], prior:4, since:"2024-08", touch:4},
-  {id:4, name:"The Aldridge Group", type:"Family Office (multi)", loc:"Dallas", sig:"familyoffice", sigTxt:"MFO, alternatives sleeve", conn:"dustin", acc:"QP", stage:"established", check:750000, vel:7, sectors:["AI Infra","AI Apps","Foundation Models"], prior:1, since:"2025-12", touch:12},
-  {id:5, name:"Daniel Okafor", type:"Tech Exec (ex-Snowflake)", loc:"Austin", sig:"liquidity", sigTxt:"IPO lockup expiry — Mar 2026", conn:"jerry", acc:"Accredited", stage:"established", check:200000, vel:7, sectors:["AI Infra","Dev Tools"], prior:0, since:"2026-01", touch:8},
-  {id:6, name:"Sofia Reyes", type:"RIA (client book)", loc:"Miami", sig:"familyoffice", sigTxt:"RIA, 40+ accredited clients", conn:"dustin", acc:"Accredited", stage:"established", check:300000, vel:7, sectors:["Foundation Models","AI Apps"], prior:2, since:"2025-10", touch:15},
-  {id:7, name:"Jonathan Wexler", type:"Hedge-fund PM", loc:"New York", sig:"techwealth", sigTxt:"Ex-Highbridge colleague", conn:"berg", acc:"QP", stage:"active", check:1000000, vel:3, sectors:["Foundation Models","AI Infra"], prior:6, since:"2024-07", touch:3},
-  {id:8, name:"Yuki Tanaka", type:"Tech Exec (ex-Vercel)", loc:"San Francisco", sig:"captable", sigTxt:"Vercel early employee, secondary", conn:"weis", acc:"Accredited", stage:"established", check:120000, vel:7, sectors:["Dev Tools","AI Apps"], prior:1, since:"2025-11", touch:20},
-  {id:9, name:"Gregory Palmer", type:"Family Office (single)", loc:"Palm Beach", sig:"familyoffice", sigTxt:"$1B+ SFO, pre-IPO focus", conn:"weis", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps"], prior:0, since:"2026-05", touch:5},
-  {id:10, name:"Amara Bello", type:"Operator (ex-Groq)", loc:"Mountain View", sig:"captable", sigTxt:"Groq cap-table holder", conn:"jerry", acc:"Accredited", stage:"establishing", check:150000, vel:7, sectors:["AI Infra"], prior:0, since:"2026-05", touch:7},
-  {id:11, name:"Connor Walsh", type:"Tech Exec (ex-Coinbase)", loc:"New York", sig:"liquidity", sigTxt:"Large secondary — May 2026", conn:"berg", acc:"Accredited", stage:"establishing", check:250000, vel:7, sectors:["AI Apps","AI Infra"], prior:0, since:"2026-05", touch:11},
-  {id:12, name:"Isabelle Moreau", type:"RIA (client book)", loc:"Boston", sig:"familyoffice", sigTxt:"RIA, alternatives mandate", conn:"dustin", acc:"Accredited", stage:"establishing", check:400000, vel:14, sectors:["Foundation Models"], prior:0, since:"2026-06", touch:9},
-  {id:13, name:"Rahul Mehta", type:"Syndicate lead", loc:"San Francisco", sig:"syndicate", sigTxt:"Active in 3 pre-IPO syndicates", conn:"weis", acc:"QP", stage:"established", check:350000, vel:3, sectors:["Foundation Models","AI Apps","AI Infra"], prior:2, since:"2025-09", touch:6},
-  {id:14, name:"The Hartwell Trust", type:"Family Office (multi)", loc:"Chicago", sig:"familyoffice", sigTxt:"MFO referral from Aldridge", conn:"inbound", acc:"QP", stage:"establishing", check:600000, vel:14, sectors:["AI Infra","Foundation Models"], prior:0, since:"2026-06", touch:4},
-  {id:15, name:"Elena Castellanos", type:"Tech Exec (ex-Databricks)", loc:"Seattle", sig:"captable", sigTxt:"Databricks secondary holder", conn:"jerry", acc:"Accredited", stage:"active", check:200000, vel:3, sectors:["AI Infra","Foundation Models"], prior:3, since:"2024-10", touch:5},
-  {id:16, name:"Thomas Bauer", type:"Family Office (single)", loc:"Zurich (US-eligible)", sig:"familyoffice", sigTxt:"SFO, US-accredited entity", conn:"berg", acc:"QP", stage:"new", check:800000, vel:14, sectors:["Foundation Models","AI Infra"], prior:0, since:"2026-06", touch:1},
-  {id:17, name:"Naomi Pearl", type:"Operator (ex-OpenAI)", loc:"San Francisco", sig:"captable", sigTxt:"OpenAI tender participant", conn:"jerry", acc:"Accredited", stage:"new", check:300000, vel:14, sectors:["Foundation Models","AI Apps"], prior:0, since:"2026-06", touch:2},
-  {id:18, name:"David Sterling", type:"Hedge-fund PM", loc:"New York", sig:"techwealth", sigTxt:"Ex-York Capital network", conn:"berg", acc:"QP", stage:"new", check:750000, vel:14, sectors:["Foundation Models","AI Infra"], prior:0, since:"2026-06", touch:3},
-  {id:19, name:"Grace Liu", type:"Tech Exec (ex-Ramp)", loc:"New York", sig:"liquidity", sigTxt:"Ramp secondary — 2026", conn:"weis", acc:"Accredited", stage:"new", check:150000, vel:14, sectors:["AI Apps"], prior:0, since:"2026-06", touch:2},
-  {id:20, name:"Fairmont Capital MFO", type:"Family Office (multi)", loc:"San Francisco", sig:"familyoffice", sigTxt:"MFO, $2B AUM, AI thesis", conn:"dustin", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps","Dev Tools"], prior:0, since:"2026-04", touch:6},
-  {id:21, name:"Owen Brady", type:"Tech Exec (ex-CoreWeave)", loc:"New Jersey", sig:"captable", sigTxt:"CoreWeave cap-table holder", conn:"jerry", acc:"Accredited", stage:"active", check:250000, vel:3, sectors:["AI Infra"], prior:2, since:"2025-02", touch:7},
-  {id:22, name:"Lydia Fenwick", type:"RIA (client book)", loc:"Denver", sig:"familyoffice", sigTxt:"RIA, pre-IPO interest", conn:"dustin", acc:"Accredited", stage:"new", check:200000, vel:14, sectors:["AI Apps","AI Infra"], prior:0, since:"2026-06", touch:1},
-  {id:23, name:"Anders Holm", type:"Syndicate member", loc:"Boston", sig:"syndicate", sigTxt:"Member, 2 AI syndicates", conn:"weis", acc:"Accredited", stage:"established", check:175000, vel:7, sectors:["AI Infra","AI Apps"], prior:1, since:"2025-12", touch:13},
-  {id:24, name:"Beatrice Okwu", type:"Family Office (single)", loc:"Houston", sig:"familyoffice", sigTxt:"SFO, energy-to-AI rotation", conn:"inbound", acc:"QP", stage:"establishing", check:500000, vel:7, sectors:["AI Infra"], prior:0, since:"2026-05", touch:8},
-  {id:25, name:"Samuel Adeyemi", type:"Tech Exec (ex-Lambda)", loc:"San Francisco", sig:"captable", sigTxt:"Lambda cap-table holder", conn:"jerry", acc:"Accredited", stage:"active", check:200000, vel:3, sectors:["AI Infra"], prior:2, since:"2025-03", touch:6},
-  {id:26, name:"Whitcombe Partners", type:"Family Office (multi)", loc:"New York", sig:"familyoffice", sigTxt:"MFO referral, Wexler intro", conn:"berg", acc:"QP", stage:"established", check:900000, vel:7, sectors:["Foundation Models","AI Infra"], prior:1, since:"2025-11", touch:10},
-  {id:27, name:"Mina Farahani", type:"Operator (ex-Anthropic)", loc:"San Francisco", sig:"captable", sigTxt:"Anthropic tender participant", conn:"jerry", acc:"Accredited", stage:"new", check:300000, vel:14, sectors:["Foundation Models"], prior:0, since:"2026-06", touch:1},
-  {id:28, name:"Robert Kingsley", type:"Hedge-fund PM", loc:"Greenwich, CT", sig:"techwealth", sigTxt:"Ex-Manhattan West contact", conn:"berg", acc:"QP", stage:"establishing", check:1000000, vel:7, sectors:["Foundation Models","AI Infra","AI Apps"], prior:0, since:"2026-04", touch:5},
+  {id:1,  name:"Helena Voss",          type:"Family Office (single)",      loc:"Greenwich, CT",  sig:"familyoffice", sigTxt:"$400M SFO, AI allocation mandate",          conn:"berg",   acc:"QP",         stage:"active",       check:500000,  vel:3,  seg:"inst", sectors:["Foundation Models","AI Infra"],                       prior:5, since:"2024-09", touch:6},
+  {id:2,  name:"Marcus Lindqvist",     type:"Tech professional (ex-Stripe)",loc:"San Francisco", sig:"liquidity",    sigTxt:"Secondary sale, Stripe — Apr 2026",          conn:"weis",   acc:"Accredited", stage:"active",       check:150000,  vel:3,  seg:"tech", sectors:["AI Apps","Dev Tools"],                                prior:3, since:"2024-11", touch:9},
+  {id:3,  name:"Priya Nadkarni",       type:"Operator (ex-Databricks)",    loc:"Seattle",        sig:"captable",     sigTxt:"Databricks cap-table holder",                conn:"jerry",  acc:"QP",         stage:"active",       check:250000,  vel:3,  seg:"tech", sectors:["AI Infra","Foundation Models"],                       prior:4, since:"2024-08", touch:4},
+  {id:4,  name:"The Aldridge Group",   type:"Family Office (multi)",       loc:"Dallas",         sig:"familyoffice", sigTxt:"MFO, alternatives sleeve",                   conn:"dustin", acc:"QP",         stage:"established",  check:750000,  vel:7,  seg:"inst", sectors:["AI Infra","AI Apps","Foundation Models"],             prior:1, since:"2025-12", touch:12},
+  {id:5,  name:"Daniel Okafor",        type:"Tech professional (ex-Snowflake)",loc:"Austin",     sig:"liquidity",    sigTxt:"IPO lockup expiry — Mar 2026",               conn:"jerry",  acc:"Accredited", stage:"established",  check:200000,  vel:7,  seg:"tech", sectors:["AI Infra","Dev Tools"],                               prior:0, since:"2026-01", touch:8},
+  {id:6,  name:"Sofia Reyes",          type:"RIA (client book)",           loc:"Miami",          sig:"familyoffice", sigTxt:"RIA, 40+ accredited clients",                conn:"dustin", acc:"Accredited", stage:"established",  check:300000,  vel:7,  seg:"inst", sectors:["Foundation Models","AI Apps"],                        prior:2, since:"2025-10", touch:15},
+  {id:7,  name:"Jonathan Wexler",      type:"Hedge-fund PM",               loc:"New York",       sig:"techwealth",   sigTxt:"Ex-Highbridge colleague",                    conn:"berg",   acc:"QP",         stage:"active",       check:1000000, vel:3,  seg:"fin",  sectors:["Foundation Models","AI Infra"],                       prior:6, since:"2024-07", touch:3},
+  {id:8,  name:"Yuki Tanaka",          type:"Tech professional (ex-Vercel)",loc:"San Francisco", sig:"captable",     sigTxt:"Vercel early employee, secondary",           conn:"weis",   acc:"Accredited", stage:"established",  check:120000,  vel:7,  seg:"tech", sectors:["Dev Tools","AI Apps"],                                prior:1, since:"2025-11", touch:20},
+  {id:9,  name:"Gregory Palmer",       type:"Family Office (single)",      loc:"Palm Beach",     sig:"familyoffice", sigTxt:"$1B+ SFO, pre-IPO focus",                    conn:"weis",   acc:"QP",         stage:"establishing", check:1000000, vel:7,  seg:"inst", sectors:["Foundation Models","AI Infra","AI Apps"],             prior:0, since:"2026-05", touch:5},
+  {id:10, name:"Amara Bello",          type:"Operator (ex-Groq)",          loc:"Mountain View",  sig:"captable",     sigTxt:"Groq cap-table holder",                      conn:"jerry",  acc:"Accredited", stage:"establishing", check:150000,  vel:7,  seg:"tech", sectors:["AI Infra"],                                           prior:0, since:"2026-05", touch:7},
+  {id:11, name:"Connor Walsh",         type:"Tech professional (ex-Coinbase)",loc:"New York",    sig:"liquidity",    sigTxt:"Large secondary — May 2026",                 conn:"berg",   acc:"Accredited", stage:"establishing", check:250000,  vel:7,  seg:"tech", sectors:["AI Apps","AI Infra"],                                 prior:0, since:"2026-05", touch:11},
+  {id:12, name:"Isabelle Moreau",      type:"RIA (client book)",           loc:"Boston",         sig:"familyoffice", sigTxt:"RIA, alternatives mandate",                  conn:"dustin", acc:"Accredited", stage:"establishing", check:400000,  vel:14, seg:"inst", sectors:["Foundation Models"],                                  prior:0, since:"2026-06", touch:9},
+  {id:13, name:"Rahul Mehta",          type:"Syndicate lead",              loc:"San Francisco",  sig:"syndicate",    sigTxt:"Active in 3 pre-IPO syndicates",             conn:"weis",   acc:"QP",         stage:"established",  check:350000,  vel:3,  seg:"fin",  sectors:["Foundation Models","AI Apps","AI Infra"],             prior:2, since:"2025-09", touch:6},
+  {id:14, name:"The Hartwell Trust",   type:"Family Office (multi)",       loc:"Chicago",        sig:"familyoffice", sigTxt:"MFO referral from Aldridge",                 conn:"inbound",acc:"QP",         stage:"establishing", check:600000,  vel:14, seg:"inst", sectors:["AI Infra","Foundation Models"],                       prior:0, since:"2026-06", touch:4},
+  {id:15, name:"Elena Castellanos",    type:"Tech professional (ex-Databricks)",loc:"Seattle",   sig:"captable",     sigTxt:"Databricks secondary holder",                conn:"jerry",  acc:"Accredited", stage:"active",       check:200000,  vel:3,  seg:"tech", sectors:["AI Infra","Foundation Models"],                       prior:3, since:"2024-10", touch:5},
+  {id:16, name:"Thomas Bauer",         type:"Family Office (single)",      loc:"Zurich (US-eligible)",sig:"familyoffice",sigTxt:"SFO, US-accredited entity",              conn:"berg",   acc:"QP",         stage:"new",          check:800000,  vel:14, seg:"inst", sectors:["Foundation Models","AI Infra"],                       prior:0, since:"2026-06", touch:1},
+  {id:17, name:"Naomi Pearl",          type:"Operator (ex-OpenAI)",        loc:"San Francisco",  sig:"captable",     sigTxt:"OpenAI tender participant",                  conn:"jerry",  acc:"Accredited", stage:"new",          check:300000,  vel:14, seg:"tech", sectors:["Foundation Models","AI Apps"],                        prior:0, since:"2026-06", touch:2},
+  {id:18, name:"David Sterling",       type:"Hedge-fund PM",               loc:"New York",       sig:"techwealth",   sigTxt:"Ex-York Capital network",                    conn:"berg",   acc:"QP",         stage:"new",          check:750000,  vel:14, seg:"fin",  sectors:["Foundation Models","AI Infra"],                       prior:0, since:"2026-06", touch:3},
+  {id:19, name:"Grace Liu",            type:"Tech professional (ex-Ramp)", loc:"New York",       sig:"liquidity",    sigTxt:"Ramp secondary — 2026",                      conn:"weis",   acc:"Accredited", stage:"new",          check:150000,  vel:14, seg:"tech", sectors:["AI Apps"],                                            prior:0, since:"2026-06", touch:2},
+  {id:20, name:"Fairmont Capital MFO", type:"Family Office (multi)",       loc:"San Francisco",  sig:"familyoffice", sigTxt:"MFO, $2B AUM, AI thesis",                    conn:"dustin", acc:"QP",         stage:"establishing", check:1000000, vel:7,  seg:"inst", sectors:["Foundation Models","AI Infra","AI Apps","Dev Tools"], prior:0, since:"2026-04", touch:6},
+  {id:21, name:"Owen Brady",           type:"Tech professional (ex-CoreWeave)",loc:"New Jersey", sig:"captable",     sigTxt:"CoreWeave cap-table holder",                 conn:"jerry",  acc:"Accredited", stage:"active",       check:250000,  vel:3,  seg:"tech", sectors:["AI Infra"],                                           prior:2, since:"2025-02", touch:7},
+  {id:22, name:"Lydia Fenwick",        type:"RIA (client book)",           loc:"Denver",         sig:"familyoffice", sigTxt:"RIA, pre-IPO interest",                      conn:"dustin", acc:"Accredited", stage:"new",          check:200000,  vel:14, seg:"inst", sectors:["AI Apps","AI Infra"],                                 prior:0, since:"2026-06", touch:1},
+  {id:23, name:"Anders Holm",          type:"Syndicate member",            loc:"Boston",         sig:"syndicate",    sigTxt:"Member, 2 AI syndicates",                    conn:"weis",   acc:"Accredited", stage:"established",  check:175000,  vel:7,  seg:"fin",  sectors:["AI Infra","AI Apps"],                                 prior:1, since:"2025-12", touch:13},
+  {id:24, name:"Beatrice Okwu",        type:"Family Office (single)",      loc:"Houston",        sig:"familyoffice", sigTxt:"SFO, energy-to-AI rotation",                 conn:"inbound",acc:"QP",         stage:"establishing", check:500000,  vel:7,  seg:"inst", sectors:["AI Infra"],                                           prior:0, since:"2026-05", touch:8},
+  {id:25, name:"Samuel Adeyemi",       type:"Tech professional (ex-Lambda)",loc:"San Francisco", sig:"captable",     sigTxt:"Lambda cap-table holder",                    conn:"jerry",  acc:"Accredited", stage:"active",       check:200000,  vel:3,  seg:"tech", sectors:["AI Infra"],                                           prior:2, since:"2025-03", touch:6},
+  {id:26, name:"Whitcombe Partners",   type:"Family Office (multi)",       loc:"New York",       sig:"familyoffice", sigTxt:"MFO referral, Wexler intro",                 conn:"berg",   acc:"QP",         stage:"established",  check:900000,  vel:7,  seg:"inst", sectors:["Foundation Models","AI Infra"],                       prior:1, since:"2025-11", touch:10},
+  {id:27, name:"Mina Farahani",        type:"Operator (ex-Anthropic)",     loc:"San Francisco",  sig:"captable",     sigTxt:"Anthropic tender participant",               conn:"jerry",  acc:"Accredited", stage:"new",          check:300000,  vel:14, seg:"tech", sectors:["Foundation Models"],                                  prior:0, since:"2026-06", touch:1},
+  {id:28, name:"Robert Kingsley",      type:"Hedge-fund PM",               loc:"Greenwich, CT",  sig:"techwealth",   sigTxt:"Ex-Manhattan West contact",                  conn:"berg",   acc:"QP",         stage:"establishing", check:1000000, vel:7,  seg:"fin",  sectors:["Foundation Models","AI Infra","AI Apps"],             prior:0, since:"2026-04", touch:5},
+  /* HNW professionals — the priority segment (v2) */
+  {id:29, name:"Dr. Alan Rosen",       type:"Physician (practice owner)",  loc:"Scarsdale, NY",  sig:"profwealth",   sigTxt:"Orthopedic group founder · sold imaging JV", conn:"dustin", acc:"Accredited", stage:"active",       check:250000,  vel:3,  seg:"med",  sectors:["Foundation Models","AI Apps"],                        prior:2, since:"2025-04", touch:5},
+  {id:30, name:"Karen Whitfield",      type:"Law partner (M&A)",           loc:"New York",       sig:"profwealth",   sigTxt:"Equity partner, AmLaw 50 firm",              conn:"berg",   acc:"Accredited", stage:"active",       check:250000,  vel:3,  seg:"law",  sectors:["Foundation Models","AI Infra"],                       prior:3, since:"2024-12", touch:4},
+  {id:31, name:"Tony Marchetti",       type:"Real-estate developer",       loc:"Long Island, NY",sig:"profwealth",   sigTxt:"Multifamily portfolio · strong cash flow",   conn:"weis",   acc:"QP",         stage:"established",  check:500000,  vel:7,  seg:"re",   sectors:["AI Infra","Foundation Models"],                       prior:1, since:"2025-08", touch:9},
+  {id:32, name:"Dr. Susan Park",       type:"Physician (dermatology)",     loc:"Newport Beach, CA",sig:"profwealth", sigTxt:"3-clinic practice owner · Rosen peer group", conn:"inbound",acc:"Accredited", stage:"establishing", check:250000,  vel:7,  seg:"med",  sectors:["AI Apps","Foundation Models"],                        prior:0, since:"2026-05", touch:6},
+  {id:33, name:"Michael Grossman",     type:"Law partner (litigation)",    loc:"Chicago",        sig:"profwealth",   sigTxt:"Referred by Karen Whitfield",                conn:"inbound",acc:"Accredited", stage:"establishing", check:100000,  vel:7,  seg:"law",  sectors:["Foundation Models"],                                  prior:0, since:"2026-04", touch:8},
+  {id:34, name:"Ray Delgado",          type:"Real-estate broker (CRE)",    loc:"Miami",          sig:"profwealth",   sigTxt:"Top commercial producer · 1031 proceeds",    conn:"dustin", acc:"Accredited", stage:"new",          check:100000,  vel:14, seg:"re",   sectors:["AI Infra"],                                           prior:0, since:"2026-06", touch:1},
+  {id:35, name:"Sandeep Rao",          type:"Tech professional (ex-Nvidia)",loc:"San Jose",      sig:"liquidity",    sigTxt:"Mid-level eng · RSU windfall, no deal access",conn:"jerry", acc:"Accredited", stage:"established",  check:150000,  vel:7,  seg:"tech", sectors:["AI Infra","Foundation Models"],                       prior:1, since:"2025-09", touch:11},
+  {id:36, name:"Dr. James Okonkwo",    type:"Surgeon (ASC owner)",         loc:"Houston",        sig:"profwealth",   sigTxt:"Ambulatory surgery center owner",            conn:"inbound",acc:"QP",         stage:"new",          check:350000,  vel:14, seg:"med",  sectors:["Foundation Models","AI Infra"],                       prior:0, since:"2026-06", touch:2},
 ];
 
 const DEALS = [
-  {id:"anthropic", co:"Anthropic", sector:"Foundation Models", round:"Secondary / SPV", price:"$350B implied", alloc:5000000, min:100000, window:7},
-  {id:"groq", co:"Groq", sector:"AI Infra", round:"Primary SPV", price:"$6.9B implied", alloc:3000000, min:50000, window:10},
-  {id:"coreweave", co:"CoreWeave", sector:"AI Infra", round:"Secondary / SPV", price:"$23B implied", alloc:4000000, min:250000, window:5},
-  {id:"vercel", co:"Vercel", sector:"Dev Tools", round:"Primary SPV", price:"$3.6B implied", alloc:2000000, min:50000, window:14},
+  {id:"anthropic", co:"Anthropic",  sector:"Foundation Models", round:"Secondary / SPV", price:"$350B implied", alloc:5000000, min:100000, window:7},
+  {id:"groq",      co:"Groq",       sector:"AI Infra",          round:"Primary SPV",     price:"$6.9B implied", alloc:3000000, min:50000,  window:10},
+  {id:"coreweave", co:"CoreWeave",  sector:"AI Infra",          round:"Secondary / SPV", price:"$23B implied",  alloc:4000000, min:250000, window:5},
+  {id:"vercel",    co:"Vercel",     sector:"Dev Tools",         round:"Primary SPV",     price:"$3.6B implied", alloc:2000000, min:50000,  window:14},
 ];
 
 const STAGE = {
-  new:{lab:"New prospect", badge:"b-new", order:0},
-  establishing:{lab:"In establishment", badge:"b-establishing", order:1},
-  established:{lab:"Established · eligible", badge:"b-established", order:2},
-  active:{lab:"Active investor", badge:"b-active", order:3},
+  new:         {lab:"New prospect",           badge:"b-new",          order:0},
+  establishing:{lab:"In establishment",       badge:"b-establishing", order:1},
+  established: {lab:"Established · eligible", badge:"b-established",  order:2},
+  active:      {lab:"Active investor",        badge:"b-active",       order:3},
 };
 const eligible = (i)=> i.stage==="established" || i.stage==="active";
 const VELLAB = {3:"~3 days",7:"~1 week",14:"~2 weeks"};
@@ -316,11 +360,14 @@ const $ = s=>document.querySelector(s);
 const fmt$ = n=> "$"+Math.round(n).toLocaleString("en-US");
 const fmtM = n=> "$"+(n/1e6).toFixed(n%1e6?1:0)+"M";
 const sigDot = s=>`<span class="sigdot" style="background:${SIG[s].color}"></span>`;
-var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", q:"",
+// v2: check tiers per managing-partner guidance — $250k standard, $100k selective
+const tierInfo = c=> c>=250000 ? {cls:"core",lab:"core · $250k+"} : (c>=100000 ? {cls:"sel",lab:"selective · $100k+"} : {cls:"",lab:"below min — verify"});
+var state = {tab:"overview", dealSel:{}, fType:"all", fStage:"all", fSeg:"all", q:"",
   finder:{preset:"family-office", query:"", stateF:"", loading:false, error:null, data:null, added:{}},
   comp:{query:"", loading:false, error:null, data:null, added:{}}};
 var nextInvId = 1000;
 var addedNet = {};
+var addedHNW = {};
 
 /* ---------- views ---------- */
 function viewOverview(){
@@ -330,7 +377,17 @@ function viewOverview(){
   const readyCap = ready.reduce((a,i)=>a+i.check,0);
   const activeCap = INV.filter(i=>i.stage==="active").reduce((a,i)=>a+i.check,0);
   const avgVel = Math.round(ready.reduce((a,i)=>a+i.vel,0)/ready.length);
-  const newCt = counts.new + counts.establishing;
+  const hnwReady = ready.filter(isHNW);
+  const hnwCap = hnwReady.reduce((a,i)=>a+i.check,0);
+  const segCap = {};
+  ready.forEach(i=>{ segCap[i.seg]=(segCap[i.seg]||0)+i.check; });
+  const maxSeg = Math.max(...Object.values(segCap),1);
+  const segRows = Object.keys(SEGS).filter(k=>segCap[k]).sort((a,b)=>segCap[b]-segCap[a]).map(k=>`
+    <div class="segrow">
+      <div class="sl">${SEGS[k]}</div>
+      <div class="sb"><i style="width:${Math.round(segCap[k]/maxSeg*100)}%;background:${SEGCOLOR[k]}"></i></div>
+      <div class="sv">${fmtM(segCap[k])} · ${ready.filter(i=>i.seg===k).length} inv.</div>
+    </div>`).join("");
   return `
   <div class="eyebrow">01 — Overview</div>
   <h1 class="page">Pipeline overview</h1>
@@ -338,8 +395,8 @@ function viewOverview(){
   <div class="kpis">
     <div class="kpi accent"><div class="v">${ready.length}</div><div class="l">Qualified &amp; eligible investors</div><div class="d">Relationship established under 506(b)</div></div>
     <div class="kpi gold"><div class="v">${fmtM(readyCap)}</div><div class="l">Ready capital</div><div class="d">Sum of typical checks, eligible base</div></div>
+    <div class="kpi hnw"><div class="v">${fmtM(hnwCap)}</div><div class="l">From HNW individuals</div><div class="d">${hnwReady.length} professionals · ${Math.round(hnwCap/readyCap*100)}% of ready capital</div></div>
     <div class="kpi"><div class="v">~${avgVel}d</div><div class="l">Avg. time-to-commit</div><div class="d">Across eligible investors</div></div>
-    <div class="kpi"><div class="v">${newCt}</div><div class="l">In the funnel</div><div class="d">New + relationship-establishing</div></div>
   </div>
 
   <div class="panel">
@@ -357,38 +414,53 @@ function viewOverview(){
       <span>${sigDot("familyoffice")} Family office / RIA</span>
       <span>${sigDot("captable")} Cap-table holder</span>
       <span>${sigDot("syndicate")} Syndicate member</span>
+      <span>${sigDot("profwealth")} Professional wealth</span>
     </div>
   </div>
 
   <div class="panel">
+    <h2>Eligible capital by segment</h2>
+    <p class="sub">v2 targets a growing share from <b style="color:var(--hnw)">HNW professionals</b> — lawyers, doctors, real-estate principals, and mid-level tech with liquidity. They lack access to these rounds (that's the product), they're decisive, and they refer their peers. Tech founders are de-prioritized: they have their own access.</p>
+    ${segRows}
+  </div>
+
+  <div class="panel">
     <h2>Why this is the lever</h2>
-    <p class="sub" style="margin-bottom:0">${fmtM(activeCap)} of capital sits with <b>active</b> investors who typically commit in ~3 days. A warm, ready base is what lets Cascade say "yes" to a larger allocation on short notice — which is exactly what wins access to oversubscribed rounds. Grow this base and you raise more <i>and</i> get into better deals.</p>
+    <p class="sub" style="margin-bottom:0">${fmtM(activeCap)} of capital sits with <b>active</b> investors who typically commit in ~3 days. A warm, ready base is what lets Cascade say "yes" to a larger allocation on short notice — which is exactly what wins access to oversubscribed rounds. Grow this base and you raise more <i>and</i> get into better deals. Checks start at <b>$250k</b>, with <b>$100k</b> accepted selectively — so twenty committed professionals is a $5M+ standing capital base.</p>
   </div>
   <p class="footnote">Prototype with synthetic data. The 506(b) eligibility logic shown is illustrative of the design, not legal advice.</p>`;
 }
 
 function viewPipeline(){
   const types = ["all",...Array.from(new Set(INV.map(i=>i.type.split(" (")[0]))).sort()];
-  const rows = INV
-    .filter(i=> state.fStage==="all"||i.stage===state.fStage)
-    .filter(i=> state.fType==="all"||i.type.startsWith(state.fType))
-    .filter(i=> !state.q || i.name.toLowerCase().includes(state.q.toLowerCase()))
+  const match = i=> (state.fStage==="all"||i.stage===state.fStage)
+    && (state.fType==="all"||i.type.startsWith(state.fType))
+    && (state.fSeg==="all"||i.seg===state.fSeg)
+    && (!state.q || i.name.toLowerCase().includes(state.q.toLowerCase()));
+  const shown = INV.filter(match);
+  const rows = shown
     .sort((a,b)=> STAGE[b.stage].order-STAGE[a.stage].order || b.check-a.check)
-    .map(i=>`
-      <tr onclick="openDrawer(${i.id})">
-        <td><div class="who">${i.name}</div><div class="whosub">${i.type} · ${i.loc}</div></td>
-        <td><div class="sig">${sigDot(i.sig)}${i.sigTxt}</div></td>
-        <td><div class="warm"><b>${TEAM[i.conn].name}</b><div class="whosub">${TEAM[i.conn].net}</div></div></td>
-        <td><span class="tag">${i.acc}</span></td>
-        <td class="right chk">${fmt$(i.check)}</td>
-        <td><span class="badge ${STAGE[i.stage].badge}">${STAGE[i.stage].lab}</span></td>
-      </tr>`).join("");
+    .map(i=>{
+      const t=tierInfo(i.check);
+      return `
+    <tr onclick="openDrawer(${i.id})">
+      <td><div class="who">${i.name}</div><div class="whosub">${i.type} · ${i.loc}</div></td>
+      <td><div class="sig">${sigDot(i.sig)}${i.sigTxt}</div></td>
+      <td><div class="warm"><b>${TEAM[i.conn].name}</b><div class="whosub">${TEAM[i.conn].net}</div></div></td>
+      <td><span class="tag">${i.acc}</span></td>
+      <td class="right"><div class="chk">${fmt$(i.check)}</div><div class="tier ${t.cls}">${t.lab}</div></td>
+      <td><span class="badge ${STAGE[i.stage].badge}">${STAGE[i.stage].lab}</span></td>
+    </tr>`;}).join("");
   return `
   <div class="eyebrow">02 — Pipeline</div>
   <h1 class="page">Investor pipeline</h1>
-  <p class="lede">Every prospect is surfaced by a signal, routed through a warm path on the team, and moved along the 506(b) relationship track. Click any investor for the documented relationship file.</p>
+  <p class="lede">Every prospect is surfaced by a signal, routed through a warm path on the team, and moved along the 506(b) relationship track. Click any investor for the documented relationship file. Check tiers reflect the house rule: <b>$250k</b> standard, <b>$100k</b> selectively.</p>
   <div class="filterbar">
     <input id="q" placeholder="Search name…" value="${state.q}" oninput="state.q=this.value;render()" />
+    <select onchange="state.fSeg=this.value;render()">
+      <option value="all" ${state.fSeg==="all"?"selected":""}>All segments</option>
+      ${Object.keys(SEGS).map(s=>`<option value="${s}" ${state.fSeg===s?"selected":""}>${SEGS[s]}</option>`).join("")}
+    </select>
     <select onchange="state.fType=this.value;render()">
       ${types.map(t=>`<option ${state.fType===t?"selected":""}>${t==="all"?"All types":t}</option>`).join("")}
     </select>
@@ -397,7 +469,7 @@ function viewPipeline(){
       ${Object.keys(STAGE).map(s=>`<option value="${s}" ${state.fStage===s?"selected":""}>${STAGE[s].lab}</option>`).join("")}
     </select>
     <div class="spacer"></div>
-    <span class="muted">${rows? INV.filter(i=>(state.fStage==="all"||i.stage===state.fStage)&&(state.fType==="all"||i.type.startsWith(state.fType))&&(!state.q||i.name.toLowerCase().includes(state.q.toLowerCase()))).length : 0} shown</span>
+    <span class="muted">${shown.length} shown</span>
   </div>
   <div class="panel" style="padding:14px 18px">
     <table>
@@ -431,29 +503,32 @@ function openDrawer(id){
   const i=INV.find(x=>x.id===id);
   const ok=eligible(i);
   const initials=i.name.split(" ").slice(0,2).map(w=>w[0]).join("");
+  const t=tierInfo(i.check);
   $("#drawer").innerHTML=`
-    <button class="x" onclick="closeDrawer()">×</button>
-    <div class="dh"><div class="avatar">${initials}</div>
-      <div><div class="nm">${i.name}</div><div class="ty">${i.type} · ${i.loc}</div></div></div>
-    <div class="elig ${ok?"ok":"no"}">
-      <span class="i">${ok?"✓":"⦸"}</span>
-      <span>${ok
-        ? "Eligible under 506(b): substantive relationship established — Cascade may present offerings."
-        : "Not yet eligible: no specific offering may be shown until a substantive relationship is established (506(b))."}</span>
-    </div>
-    <div class="sec"><h4>Relationship stage</h4>${stepper(i)}</div>
-    <div class="sec"><h4>Profile</h4>
-      <div class="kv"><span class="k">Accreditation</span><span class="v">${i.acc==="QP"?"Qualified Purchaser":"Accredited"}</span></div>
-      <div class="kv"><span class="k">Typical check</span><span class="v">${fmt$(i.check)}</span></div>
-      <div class="kv"><span class="k">Sector appetite</span><span class="v">${i.sectors.join(", ")}</span></div>
-      <div class="kv"><span class="k">Typical time-to-commit</span><span class="v">${VELLAB[i.vel]}</span></div>
-      <div class="kv"><span class="k">Prior SPVs with Cascade</span><span class="v">${i.prior}</span></div>
-      <div class="kv"><span class="k">Last substantive touch</span><span class="v">${i.touch} days ago ${i.touch>14?'· <span style="color:var(--amber)">needs touch</span>':''}</span></div>
-      <div class="kv"><span class="k">Warm path</span><span class="v">${TEAM[i.conn].name}</span></div>
-    </div>
-    <div class="sec"><h4>Documented relationship file</h4>
-      <ul class="timeline">${relTimeline(i)}</ul>
-    </div>`;
+  <button class="x" onclick="closeDrawer()">×</button>
+  <div class="dh"><div class="avatar">${initials}</div>
+  <div><div class="nm">${i.name}</div><div class="ty">${i.type} · ${i.loc}</div></div></div>
+  <div class="elig ${ok?"ok":"no"}">
+    <span class="i">${ok?"✓":"⦸"}</span>
+    <span>${ok
+      ? "Eligible under 506(b): substantive relationship established — Cascade may present offerings."
+      : "Not yet eligible: no specific offering may be shown until a substantive relationship is established (506(b))."}</span>
+  </div>
+  <div class="sec"><h4>Relationship stage</h4>${stepper(i)}</div>
+  <div class="sec"><h4>Profile</h4>
+    <div class="kv"><span class="k">Segment</span><span class="v">${SEGS[i.seg]||"—"}${isHNW(i)?' · <span style="color:var(--hnw)">HNW individual</span>':''}</span></div>
+    <div class="kv"><span class="k">Accreditation</span><span class="v">${i.acc==="QP"?"Qualified Purchaser":i.acc}</span></div>
+    <div class="kv"><span class="k">Typical check</span><span class="v">${fmt$(i.check)} <span class="tier ${t.cls}" style="font-weight:400">· ${t.lab}</span></span></div>
+    <div class="kv"><span class="k">Sector appetite</span><span class="v">${i.sectors.join(", ")}</span></div>
+    <div class="kv"><span class="k">Typical time-to-commit</span><span class="v">${VELLAB[i.vel]}</span></div>
+    <div class="kv"><span class="k">Prior SPVs with Cascade</span><span class="v">${i.prior}</span></div>
+    <div class="kv"><span class="k">Last substantive touch</span><span class="v">${i.touch} days ago ${i.touch>14?'· <span style="color:var(--amber)">needs touch</span>':''}</span></div>
+    <div class="kv"><span class="k">Warm path</span><span class="v">${TEAM[i.conn].name}</span></div>
+  </div>
+  ${isHNW(i)?`<div class="sec"><h4>Why this profile fits</h4><p class="sub" style="margin:0">No independent access to oversubscribed AI rounds — access is the product. Historically the easiest segment to work with and the most likely to refer peers. Ask for two introductions from their professional circle after the first close.</p></div>`:""}
+  <div class="sec"><h4>Documented relationship file</h4>
+    <ul class="timeline">${relTimeline(i)}</ul>
+  </div>`;
   $("#scrim").classList.add("on");$("#drawer").classList.add("on");
 }
 function closeDrawer(){$("#scrim").classList.remove("on");$("#drawer").classList.remove("on");}
@@ -472,6 +547,7 @@ function viewMatcher(){
   const selCount=Object.keys(sel).filter(k=>sel[k]).length;
   const selVel=Math.max(0,...Object.keys(sel).filter(k=>sel[k]).map(k=>INV.find(x=>x.id===+k).vel));
   const readyCap=elig.reduce((a,i)=>a+i.check,0);
+  const hnwShare=elig.length?Math.round(elig.filter(isHNW).length/elig.length*100):0;
   const dealCards=DEALS.map(d=>{
     const m=INV.filter(i=>i.sectors.includes(d.sector)&&i.check>=d.min&&eligible(i)).reduce((a,i)=>a+i.check,0);
     return `<div class="deal ${d.id===deal.id?"sel":""}" onclick="state.dealSelId='${d.id}';render()">
@@ -486,7 +562,7 @@ function viewMatcher(){
     return `<div class="mrow ${ok?"":"locked"} ${on?"on":""}" onclick="${ok?`toggleSel(${i.id})`:`openDrawer(${i.id})`}">
       <div class="sel-btn">${on?"✓":""}</div>
       <div class="grow">
-        <div class="nm">${i.name} <span class="muted" style="font-weight:400">· ${i.type.split(" (")[0]}</span></div>
+        <div class="nm">${i.name} <span class="muted" style="font-weight:400">· ${i.type.split(" (")[0]}</span>${isHNW(i)?' <span class="chip p" style="margin-left:4px">HNW</span>':''}</div>
         <div class="mt">Appetite: ${i.sectors.join(", ")} · via ${TEAM[i.conn].name}</div>
         ${ok?"":`<div class="lockmsg">🔒 Relationship not established — cannot present this offering (506(b))</div>`}
       </div>
@@ -496,7 +572,7 @@ function viewMatcher(){
       </div>
     </div>`;}).join("");
   return `
-  <div class="eyebrow">06 — Allocation</div>
+  <div class="eyebrow">07 — Allocation</div>
   <h1 class="page">Deal matcher &amp; allocation fill</h1>
   <p class="lede">Pick a live SPV. The engine ranks investors whose appetite and check fit — but it will only let you present the deal to investors with an established 506(b) relationship. Select investors to fill the allocation and watch how fast warm, ready capital comes together.</p>
   <div class="dealgrid">
@@ -509,12 +585,13 @@ function viewMatcher(){
       <div class="metricrow">
         <div class="m"><div class="v">${selCount}</div><div class="l">investors selected</div></div>
         <div class="m"><div class="v">${fmtM(readyCap)}</div><div class="l">eligible capital available</div></div>
+        <div class="m"><div class="v">${hnwShare}%</div><div class="l">of eligible are HNW individuals</div></div>
         <div class="m"><div class="v">${selCount?VELLAB[selVel]:"—"}</div><div class="l">est. time to close</div></div>
         <div class="m"><div class="v">${pct>=100?"✓ covered":Math.round(pct)+"%"}</div><div class="l">of allocation</div></div>
       </div>
       ${pct>=100?`<div class="elig ok" style="margin-top:0"><span class="i">✓</span><span>Allocation covered from ${selCount} pre-qualified investors, closeable in ${VELLAB[selVel]} — well inside the ${deal.window}-day window.</span></div>`:""}
       <div style="margin-top:14px">${mrows}</div>
-      <div class="note">Locked rows are matched by fit but are <b>in establishment</b> — under 506(b) no specific deal can be shown until the relationship is established. They represent near-term capacity once the engine completes their relationship file.</div>
+      <div class="note">Locked rows are matched by fit but are <b>in establishment</b> — under 506(b) no specific deal can be shown until the relationship is established. They represent near-term capacity once the engine completes their relationship file. House minimums: <b>$250k</b> standard, <b>$100k</b> accepted case-by-case — five HNW professionals at standard checks is $1.25M of any allocation.</div>
     </div>
   </div>`;
 }
@@ -525,22 +602,101 @@ function toggleSel(id){
 
 function viewHow(){
   return `
-  <div class="eyebrow">07 — Methodology</div>
+  <div class="eyebrow">08 — Methodology</div>
   <h1 class="page">How the engine works</h1>
   <p class="lede">The whole design follows from one fact: Cascade's SPVs are normally 506(b), so it can only show a deal to investors it already has a pre-existing, substantive relationship with. The engine is built to create and document those relationships at scale — before deals exist.</p>
-  <div class="panel"><h2>1 · Find</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists: liquidity events (IPOs, tenders, secondaries), tech wealth and operators, family offices &amp; RIAs, and cap-table holders of the very companies Cascade backs. Each is routed to the team member with the warmest path.</p></div>
-  <div class="panel"><h2>2 · Establish (the 506(b) core)</h2><p class="sub" style="margin:0">Every prospect runs a documented relationship-establishment track — substantive contact, sophistication and accreditation captured, timestamped. Following the <b>Citizen VC</b> precedent, no specific offering is shown until that relationship exists. This is what makes the base legally eligible and is the heart of the engine.</p></div>
-  <div class="panel"><h2>3 · Keep warm</h2><p class="sub" style="margin:0">Between deals, the base is kept engaged with curated context (secondary pricing, why one name over another) so that when an allocation opens, pre-qualified capital can move in days. Speed is the competitive weapon.</p></div>
-  <div class="panel"><h2>4 · Match &amp; fill</h2><p class="sub" style="margin:0">When a deal lands, the engine ranks eligible investors by fit and check, enforces the 506(b) wall, and helps fill the allocation fast from warm capital — the Deal Matcher tab shows this in action.</p></div>
+  <div class="panel"><h2>1 · Find — professionals first</h2><p class="sub" style="margin:0">Surface likely-qualified investors from signals rather than cold lists. The priority segment (v2) is <b>HNW professionals without venture access</b>: law-firm partners, physicians and practice owners, real-estate principals, and mid-level tech employees post-liquidity. Access is exactly what Cascade sells them; tech founders are de-prioritized because they have their own. Institutional signals (family offices &amp; RIAs, cap-table holders, liquidity events) continue in parallel — and profession-focused RIAs are themselves the biggest door to professionals. Each prospect is routed to the team member with the warmest path.</p></div>
+  <div class="panel"><h2>2 · Establish (the 506(b) core)</h2><p class="sub" style="margin:0">Every prospect runs a documented relationship-establishment track — substantive contact, sophistication and accreditation captured, timestamped. Following the <b>Citizen VC</b> precedent, no specific offering is shown until that relationship exists. This is what makes the base legally eligible and is the heart of the engine. It matters doubly for individuals: the compliant route to professionals is advisers, communities, and referrals — never cold deal promotion.</p></div>
+  <div class="panel"><h2>3 · Keep warm</h2><p class="sub" style="margin:0">Between deals, the base is kept engaged with curated context (secondary pricing, why one name over another) so that when an allocation opens, pre-qualified capital can move in days. Speed is the competitive weapon. Professionals get the simplicity pitch: hard-to-get opportunities, with a team that handles everything.</p></div>
+  <div class="panel"><h2>4 · Match &amp; fill</h2><p class="sub" style="margin:0">When a deal lands, the engine ranks eligible investors by fit and check, enforces the 506(b) wall, and helps fill the allocation fast from warm capital — the Deal Matcher tab shows this in action. Check tiers follow the house rule: <b>$250k</b> standard, <b>$100k</b> selectively.</p></div>
+  <div class="panel"><h2>5 · Multiply (the referral loop)</h2><p class="sub" style="margin:0">Every happy professional investor is a door to their peer group — the surgeon's practice partners, the law firm's other equity partners, the developer's co-investors. The engine records the referrer, routes each referral into the relationship track, and treats referrals as the #1 source of new individual LPs.</p></div>
   <p class="footnote">Synthetic prototype for discussion. 506(b) / Citizen VC logic is illustrative of the product design, not legal advice — specifics to be confirmed with counsel.</p>`;
 }
 
-/* ---------- prospect finder (live SEC IAPD: RIAs + family offices) ---------- */
+/* ---------- HNW channels (v2 — the priority segment) ---------- */
+const HNWGATE=[
+  {name:"Dr. Peter Shah",      role:"Organizer, Bay Area physician investing group", seg:"med", est:250000, note:"One talk on private AI markets reaches 60+ accredited physicians"},
+  {name:"Linda Torres, CPA",   role:"Managing partner, medical-practice CPA firm",   seg:"med", est:0,      note:"Sees practice-sale liquidity before anyone else"},
+  {name:"Deborah Klein, Esq.", role:"Trusts &amp; estates attorney, NYC",            seg:"law", est:0,      note:"Referral partner — advises partners at three AmLaw firms"},
+  {name:"Frank Caruso",        role:"President, tri-state CRE owners association",   seg:"re",  est:500000, note:"Gate to 200+ property principals with 1031 cash"},
+  {name:"Sarah Lindgren",      role:"Equity-comp adviser to big-tech employees",     seg:"tech",est:150000, note:"Clients are exactly the post-RSU mid-level cohort"},
+];
+const LIQEVENTS=[
+  {co:"Figma",      ev:"IPO lockup expiry",     who:"Mid-level employees with vested equity",       when:"2026 H1"},
+  {co:"Databricks", ev:"Employee tender",       who:"Operators &amp; senior ICs — Jerry's network", when:"2026 Q2"},
+  {co:"OpenAI",     ev:"Secondary window",      who:"Tender participants below exec level",         when:"2026 Q3 (rumored)"},
+  {co:"Stripe",     ev:"Recurring secondaries", who:"Long-tenured mid-level employees",             when:"ongoing"},
+];
+function hnwFinder(preset){
+  state.tab="finder"; state.finder.preset=preset; state.finder.query="";
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab==="finder"));
+  render(); runFinder();
+}
+function routeHNW(idx){
+  const c=HNWGATE[idx]; if(!c||addedHNW[idx]) return;
+  const since=new Date().toISOString().slice(0,7);
+  INV.push({ id:nextInvId++, name:c.name.replace(/&amp;/g,"&"), type:"Channel gatekeeper", loc:"—",
+    sig:"profwealth", sigTxt:"HNW channel · "+c.role.replace(/&amp;/g,"&"), conn:"inbound", acc:"Unverified",
+    stage:"new", check:c.est, vel:14, seg:c.seg, sectors:["Foundation Models","AI Infra","AI Apps"],
+    prior:0, since, touch:0 });
+  addedHNW[idx]=true; render();
+}
+function viewHNW(){
+  const gates=HNWGATE.map((c,i)=>`<div class="netitem">
+    <div class="grow"><div class="nn">${c.name} <span class="chip" style="margin-left:6px;color:${SEGCOLOR[c.seg]};border-color:${SEGCOLOR[c.seg]}44">${SEGS[c.seg]}</span></div>
+    <div class="nr">${c.role} — ${c.note}</div></div>
+    ${c.est?`<div style="text-align:right"><div class="chk">${fmt$(c.est)}</div><div class="via">est. own check</div></div>`:""}
+    <button class="addbtn ${addedHNW[i]?"done":""}" ${addedHNW[i]?"":`onclick="routeHNW(${i})"`}>${addedHNW[i]?"✓ Routed":"Route to track →"}</button>
+  </div>`).join("");
+  const evs=LIQEVENTS.map(e=>`<div class="evrow">
+    <div class="co">${e.co}</div>
+    <div class="ed"><b>${e.ev}</b> — ${e.who}</div>
+    <div class="ew">${e.when}</div>
+  </div>`).join("");
+  return `
+  <div class="eyebrow" style="color:var(--hnw)">04 — HNW Channels · Priority Segment</div>
+  <h1 class="page">High-net-worth professionals</h1>
+  <p class="lede">Cascade's best LPs are wealthy professionals <b>without</b> venture access — partners at law firms, physicians and practice owners, real-estate principals, and mid-level tech employees who made a killing on equity. Access to hard-to-get rounds is exactly what Cascade sells them; they're decisive, low-maintenance, and they refer their peers. Checks from <b>$250k</b>, with <b>$100k</b> accepted selectively. Tech founders are de-prioritized — they have their own access.</p>
+  <div class="banner hnwb">Compliance shape of this segment: reach professionals through the <b>advisers, communities, and referrals</b> that aggregate them — a warm, documented 506(b) relationship first, never cold deal promotion. Accreditation is confirmed during establishment, including for $100k checks.</div>
+
+  <div class="panel">
+    <h2>Channel 1 · Profession-focused advisers (live search)</h2>
+    <p class="sub">One adviser relationship can represent dozens of accredited professionals. These run real queries against the SEC IAPD registry.</p>
+    <div class="chgrid">
+      <div class="chcard"><div class="cn">Advisers to physicians &amp; dentists</div><div class="cd">RIAs whose book is medical-practice owners and specialists — the highest-density pool of accredited professionals.</div><button class="runbtn" onclick="hnwFinder('physicians')">Search live →</button></div>
+      <div class="chcard"><div class="cn">Advisers to attorneys</div><div class="cd">RIAs serving law-firm partners — concentrated in the same cities as Cascade's team.</div><button class="runbtn" onclick="hnwFinder('attorneys')">Search live →</button></div>
+      <div class="chcard"><div class="cn">Real-estate wealth advisers</div><div class="cd">Advisers to developers, brokers, and 1031 investors with recurring liquidity.</div><button class="runbtn" onclick="hnwFinder('real-estate')">Search live →</button></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Channel 2 · Communities, gatekeepers &amp; referral partners</h2>
+    <p class="sub">The organizers, CPAs, and estate attorneys who sit in front of whole professional circles. (Synthetic for the prototype; in production this imports from the team's contacts and CRM.)</p>
+    ${gates}
+  </div>
+
+  <div class="panel">
+    <h2>Channel 3 · Post-liquidity tech (mid-level, not founders)</h2>
+    <p class="sub">Track liquidity <b>events</b>, then reach the newly-liquid cohort through the equity-comp advisers and CPAs who serve them — not by scraping individuals.</p>
+    ${evs}
+  </div>
+
+  <div class="panel">
+    <h2>The rules of this segment</h2>
+    <p class="sub" style="margin-bottom:0"><b>$250k</b> is the standard individual check; <b>$100k</b> is accepted case-by-case — flag tier on every prospect. Accreditation is never assumed and is documented during relationship establishment. Every closed professional should be asked for two peer introductions — the referral loop is the cheapest, warmest channel this segment has.</p>
+  </div>
+  <p class="footnote">Prototype: named gatekeepers and events on this tab are synthetic placeholders for discussion; adviser searches are live SEC data. Not an offer or solicitation.</p>`;
+}
+
+/* ---------- prospect finder (live SEC IAPD: RIAs + family offices + profession-focused advisers) ---------- */
 const FPRESETS=[
-  {k:"family-office",  label:"Family offices"},
-  {k:"mfo",            label:"Multi-family offices"},
-  {k:"private-wealth", label:"RIAs — private wealth"},
-  {k:"alternatives",   label:"RIAs — alternatives"},
+  {k:"family-office", label:"Family offices"},
+  {k:"mfo",           label:"Multi-family offices"},
+  {k:"private-wealth",label:"RIAs — private wealth"},
+  {k:"alternatives",  label:"RIAs — alternatives"},
+  {k:"physicians",    label:"Advisers to physicians", hnw:true},
+  {k:"attorneys",     label:"Advisers to attorneys",  hnw:true},
+  {k:"real-estate",   label:"Real-estate wealth",     hnw:true},
 ];
 
 function setPreset(k){ state.finder.preset=k; state.finder.query=""; render(); }
@@ -561,7 +717,9 @@ function ringClass(s){ return s>=75?"":(s>=55?"mid":"low"); }
 function firmCard(p, idx){
   const added=!!state.finder.added[idx];
   const loc=[p.city,p.state].filter(Boolean).join(", ")||p.country||"—";
+  const hnwPreset=(FPRESETS.find(x=>x.k===state.finder.preset)||{}).hnw;
   const chips=[`<span class="chip g">SEC-registered</span>`];
+  if(hnwPreset) chips.push(`<span class="chip p">HNW channel</span>`);
   if(loc) chips.push(`<span class="chip">${loc}</span>`);
   if(p.branches) chips.push(`<span class="chip">${p.branches} office${p.branches>1?"s":""}</span>`);
   if(p.sec) chips.push(`<span class="chip">${p.sec}</span>`);
@@ -587,15 +745,17 @@ function addFromFinder(idx){
   const p=state.finder.data.prospects[idx];
   const loc=[p.city,p.state].filter(Boolean).join(", ")||p.country||"—";
   const since=new Date().toISOString().slice(0,7);
-  const isFO=state.finder.preset==="family-office"||state.finder.preset==="mfo";
+  const preset=state.finder.preset;
+  const isFO=preset==="family-office"||preset==="mfo";
+  const hnwPreset=(FPRESETS.find(x=>x.k===preset)||{}).hnw;
   INV.push({
     id:nextInvId++, name:p.name,
-    type:isFO?"Family office":"RIA / wealth adviser",
+    type:isFO?"Family office":(hnwPreset?"Profession-focused RIA":"RIA / wealth adviser"),
     loc,
-    sig:"familyoffice",
-    sigTxt:`SEC IAPD${p.sec?" · "+p.sec:(p.crd?" · CRD "+p.crd:"")}`,
+    sig:hnwPreset?"profwealth":"familyoffice",
+    sigTxt:`SEC IAPD${p.sec?" · "+p.sec:(p.crd?" · CRD "+p.crd:"")}${hnwPreset?" · HNW channel":""}`,
     conn:"inbound", acc:"Unverified", stage:"new",
-    check:0, vel:14,
+    check:0, vel:14, seg:"inst",
     sectors:["Foundation Models","AI Infra","AI Apps"],
     prior:0, since, touch:0,
   });
@@ -605,26 +765,26 @@ function addFromFinder(idx){
 function viewFinder(){
   const f=state.finder;
   const isFile = location.protocol==="file:";
-  const presets=FPRESETS.map(x=>`<button class="preset ${f.preset===x.k?"on":""}" onclick="setPreset('${x.k}')">${x.label}</button>`).join("");
+  const presets=FPRESETS.map(x=>`<button class="preset ${x.hnw?"hnwp":""} ${f.preset===x.k?"on":""}" onclick="setPreset('${x.k}')">${x.label}</button>`).join("");
   let body="";
   if(isFile){
-    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link (e.g. <b>cascade-weld.vercel.app</b>) to query the SEC registry — opening the raw file locally can’t reach the API.</div>`;
+    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link to query the SEC registry — opening the raw file locally can't reach the API.</div>`;
   } else if(f.loading){
     body=`<div class="panel"><span class="spin"></span>Querying the SEC adviser registry live…</div>`;
   } else if(f.error){
-    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>Couldn’t reach the SEC IAPD API: ${f.error}. Try again in a moment.</span></div>`;
+    body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>Couldn't reach the SEC IAPD API: ${f.error}. Try again in a moment.</span></div>`;
   } else if(f.data){
     const ps=f.data.prospects||[];
     body=`<div class="muted" style="margin:0 0 12px">${ps.length} firms · ${f.data.label}${f.data.query?` · &ldquo;${f.data.query}&rdquo;`:""} · as of ${(f.data.asOf||"").slice(0,10)}</div>`+
       (ps.length?ps.map((p,i)=>firmCard(p,i)).join(""):`<div class="note">No active firms matched. Try another channel or term.</div>`);
   } else {
-    body=`<div class="note">Pick a channel, then run a live search. Results come straight from the public SEC Investment Adviser registry — real, currently-registered RIAs and family offices.</div>`;
+    body=`<div class="note">Pick a channel, then run a live search. Results come straight from the public SEC Investment Adviser registry — real, currently-registered RIAs and family offices. The <span style="color:var(--hnw)">pink presets</span> are the v2 HNW channels: advisers who aggregate accredited physicians, attorneys, and real-estate principals.</div>`;
   }
   return `
-  <div class="eyebrow">04 — Live Sourcing</div>
-  <h1 class="page">Prospect finder &mdash; RIAs &amp; family offices</h1>
-  <p class="lede">Surfaces real allocators from the public <b>SEC Investment Adviser registry (IAPD)</b> — registered RIAs and family offices, the channels that actually invest in pre-IPO SPVs. Each enters the pipeline as a <b>new prospect</b> to begin relationship-building.</p>
-  <div class="banner">Live, public SEC IAPD data &mdash; real registered firms. Sourcing signals to begin a relationship under 506(b); not an offer or solicitation, accreditation never assumed. Richer mandate / AUM / contact data (e.g. FINTRX) is the paid upgrade that layers on top.</div>
+  <div class="eyebrow">05 — Live Sourcing</div>
+  <h1 class="page">Prospect finder — RIAs, family offices &amp; profession-focused advisers</h1>
+  <p class="lede">Surfaces real allocators from the public <b>SEC Investment Adviser registry (IAPD)</b> — registered RIAs and family offices, plus the profession-focused advisers who aggregate Cascade's priority HNW segment. Each enters the pipeline as a <b>new prospect</b> to begin relationship-building.</p>
+  <div class="banner">Live, public SEC IAPD data — real registered firms. Sourcing signals to begin a relationship under 506(b); not an offer or solicitation, accreditation never assumed. Richer mandate / AUM / contact data (e.g. FINTRX) is the paid upgrade that layers on top.</div>
   <div class="presets">${presets}</div>
   <div class="finderbar">
     <input id="fq" placeholder="or search any term — e.g. private capital" value="${f.query}" oninput="state.finder.query=this.value" />
@@ -636,23 +796,26 @@ function viewFinder(){
 
 /* ---------- warm network & referrals (channel 1) ---------- */
 const NETWORK=[
-  {name:"Jonathan Reyes",   via:"berg",   role:"Ex-York Capital PM · recently liquid",        est:750000, sig:"techwealth"},
-  {name:"Robert Vance",     via:"berg",   role:"Hedge-fund allocator · Greenwich",            est:1000000, sig:"techwealth"},
-  {name:"Karen Liu",        via:"weis",   role:"Repeat pre-IPO secondary buyer",              est:300000, sig:"liquidity"},
-  {name:"Marco Bianchi",    via:"weis",   role:"Family-office CIO · prior SPV LP",            est:500000, sig:"familyoffice"},
-  {name:"Priya Anand",      via:"jerry",  role:"Ex-Databricks VP · post-tender liquidity",     est:250000, sig:"captable"},
-  {name:"Sam Okoro",        via:"jerry",  role:"Operator-angel · AI infra focus",             est:200000, sig:"captable"},
-  {name:"Helen Marsh",      via:"dustin", role:"RIA · ~30 accredited clients",                est:400000, sig:"familyoffice"},
-  {name:"Greg Tran",        via:"dustin", role:"Wealth adviser · alternatives sleeve",        est:300000, sig:"familyoffice"},
+  {name:"Jonathan Reyes",  via:"berg",   role:"Ex-York Capital PM · recently liquid",     est:750000,  sig:"techwealth"},
+  {name:"Robert Vance",    via:"berg",   role:"Hedge-fund allocator · Greenwich",         est:1000000, sig:"techwealth"},
+  {name:"Karen Liu",       via:"weis",   role:"Repeat pre-IPO secondary buyer",           est:300000,  sig:"liquidity"},
+  {name:"Marco Bianchi",   via:"weis",   role:"Family-office CIO · prior SPV LP",         est:500000,  sig:"familyoffice"},
+  {name:"Priya Anand",     via:"jerry",  role:"Ex-Databricks VP · post-tender liquidity", est:250000,  sig:"captable"},
+  {name:"Sam Okoro",       via:"jerry",  role:"Operator-angel · AI infra focus",          est:200000,  sig:"captable"},
+  {name:"Helen Marsh",     via:"dustin", role:"RIA · ~30 accredited clients",             est:400000,  sig:"familyoffice"},
+  {name:"Greg Tran",       via:"dustin", role:"Wealth adviser · alternatives sleeve",     est:300000,  sig:"familyoffice"},
+  {name:"Dr. Nina Vasquez",via:"dustin", role:"Cardiology group partner · Rosen intro",   est:250000,  sig:"profwealth"},
+  {name:"Paul Abrams, Esq.",via:"berg",  role:"Corporate partner · Whitfield's firm",     est:250000,  sig:"profwealth"},
 ];
 var refMsg="";
 
 function routeNetwork(idx){
   const c=NETWORK[idx]; if(!c||addedNet[idx]) return;
   const since=new Date().toISOString().slice(0,7);
+  const seg=c.sig==="profwealth"?(c.role.toLowerCase().includes("esq")||c.role.toLowerCase().includes("partner ·")&&c.role.toLowerCase().includes("firm")?"law":"med"):(c.sig==="familyoffice"?"inst":(c.sig==="captable"||c.sig==="liquidity"?"tech":"fin"));
   INV.push({ id:nextInvId++, name:c.name, type:c.role.split(" · ")[0], loc:"—",
     sig:c.sig, sigTxt:`Warm intro · ${TEAM[c.via].net}`, conn:c.via, acc:"Unverified",
-    stage:"new", check:c.est, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    stage:"new", check:c.est, vel:14, seg, sectors:["Foundation Models","AI Infra","AI Apps"],
     prior:0, since, touch:0 });
   addedNet[idx]=true; render();
 }
@@ -663,9 +826,10 @@ function logReferral(){
   const ck=parseInt(((document.getElementById("refCheck")||{}).value||"").replace(/[^0-9]/g,""),10)||0;
   if(!nm.trim()){ refMsg="Enter a name to log a referral."; render(); return; }
   const since=new Date().toISOString().slice(0,7);
+  const referrer=INV.find(x=>x.name===by);
   INV.push({ id:nextInvId++, name:nm.trim(), type:"Referral", loc:"—",
-    sig:"familyoffice", sigTxt:`Referred by ${by||"existing investor"}`, conn:"inbound",
-    acc:"Unverified", stage:"new", check:ck, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    sig:referrer&&isHNW(referrer)?"profwealth":"familyoffice", sigTxt:`Referred by ${by||"existing investor"}`, conn:"inbound",
+    acc:"Unverified", stage:"new", check:ck, vel:14, seg:referrer?referrer.seg:"inst", sectors:["Foundation Models","AI Infra","AI Apps"],
     prior:0, since, touch:0 });
   refMsg=`Added ${nm.trim()} as a new prospect (referred by ${by||"existing investor"}). Find them in the pipeline.`;
   render();
@@ -676,9 +840,9 @@ function viewWarmNetwork(){
   NETWORK.forEach((c,i)=>{ (groups[c.via]=groups[c.via]||[]).push({...c,_i:i}); });
   const netHtml=Object.keys(groups).map(via=>`
     <div style="margin-bottom:14px">
-      <div class="ppl"><div class="h">${TEAM[via].name} &mdash; ${TEAM[via].net}</div></div>
+      <div class="ppl"><div class="h">${TEAM[via].name} — ${TEAM[via].net}</div></div>
       ${groups[via].map(c=>`<div class="netitem">
-        <div class="grow"><div class="nn">${c.name}</div><div class="nr">${c.role}</div></div>
+        <div class="grow"><div class="nn">${c.name}${c.sig==="profwealth"?' <span class="chip p" style="margin-left:6px">HNW professional</span>':''}</div><div class="nr">${c.role}</div></div>
         <div style="text-align:right"><div class="chk">${fmt$(c.est)}</div><div class="via">warm intro</div></div>
         <button class="addbtn ${addedNet[c._i]?"done":""}" ${addedNet[c._i]?"":`onclick="routeNetwork(${c._i})"`}>${addedNet[c._i]?"✓ Routed":"Route to track →"}</button>
       </div>`).join("")}
@@ -688,15 +852,15 @@ function viewWarmNetwork(){
   return `
   <div class="eyebrow">03 — Warm Network</div>
   <h1 class="page">Warm network &amp; referrals</h1>
-  <p class="lede">The highest-conversion channel by far. These prospects come from the partners&rsquo; own relationships and from existing-investor referrals — not scraped lists — so they enter the pipeline already warm. Route each into the 506(b) relationship track.</p>
+  <p class="lede">The highest-conversion channel by far. These prospects come from the partners' own relationships and from existing-investor referrals — not scraped lists — so they enter the pipeline already warm. Route each into the 506(b) relationship track. Referrals from happy HNW professionals into their peer groups are the engine's #1 source of new individual LPs.</p>
   <div class="panel">
-    <h2>Mine the team&rsquo;s network</h2>
-    <p class="sub">Likely-qualified contacts surfaced from each partner&rsquo;s network. (Synthetic for the prototype; in production this imports from the team&rsquo;s contacts and CRM.)</p>
+    <h2>Mine the team's network</h2>
+    <p class="sub">Likely-qualified contacts surfaced from each partner's network. (Synthetic for the prototype; in production this imports from the team's contacts and CRM.)</p>
     ${netHtml}
   </div>
   <div class="panel">
     <h2>Capture a referral</h2>
-    <p class="sub">Every happy investor is a source of two or three more. Log a referral and it enters the pipeline as a new prospect, with the referrer recorded.</p>
+    <p class="sub">Every happy investor is a source of two or three more — a surgeon refers surgeons, a partner refers partners. Log a referral and it enters the pipeline as a new prospect, with the referrer (and their segment) recorded.</p>
     <div class="refform">
       <input class="rn" id="refName" placeholder="Referred prospect name" />
       <select id="refBy"><option value="">Referred by…</option>${opts}</select>
@@ -711,14 +875,14 @@ function viewWarmNetwork(){
 // Curated starting set of firms comparable to Cascade (late-stage / pre-IPO access,
 // single-asset SPVs, secondaries). Editable — you can scan any name.
 const COMPETITORS=[
-  {n:"137 Ventures",               t:"Late-stage SPV access"},
-  {n:"Goanna Capital",             t:"Late-stage AI / secondary"},
-  {n:"Manhattan Venture Partners", t:"Pre-IPO secondaries + SPVs"},
-  {n:"UpMarket",                   t:"Pre-IPO SPV platform"},
-  {n:"G Squared",                  t:"Direct secondaries"},
-  {n:"Industry Ventures",          t:"Secondaries / FoF"},
-  {n:"StepStone",                  t:"Secondaries / co-invest"},
-  {n:"iCapital",                   t:"Access-fund / feeder sponsor"},
+  {n:"137 Ventures",              t:"Late-stage SPV access"},
+  {n:"Goanna Capital",            t:"Late-stage AI / secondary"},
+  {n:"Manhattan Venture Partners",t:"Pre-IPO secondaries + SPVs"},
+  {n:"UpMarket",                  t:"Pre-IPO SPV platform"},
+  {n:"G Squared",                 t:"Direct secondaries"},
+  {n:"Industry Ventures",         t:"Secondaries / FoF"},
+  {n:"StepStone",                 t:"Secondaries / co-invest"},
+  {n:"iCapital",                  t:"Access-fund / feeder sponsor"},
 ];
 function pickCompetitor(name){ state.comp.query=name; runCompetitor(); }
 
@@ -737,7 +901,7 @@ function addPersonComp(idx){
   INV.push({ id:nextInvId++, name:p.name, type:(p.roles&&p.roles[0])||"Contact", loc:"—",
     sig:p.channel?"familyoffice":"syndicate",
     sigTxt:`${p.channel?"Channel":"Competitor"} · ${p.vehicle}`, conn:"inbound",
-    acc:"Unverified", stage:"new", check:0, vel:14, sectors:["Foundation Models","AI Infra","AI Apps"],
+    acc:"Unverified", stage:"new", check:0, vel:14, seg:"inst", sectors:["Foundation Models","AI Infra","AI Apps"],
     prior:0, since, touch:0 });
   state.comp.added[idx]=true; render();
 }
@@ -745,43 +909,43 @@ function viewCompetitor(){
   const c=state.comp; const isFile=location.protocol==="file:";
   let body="";
   if(isFile){
-    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link to query the SEC — opening the raw file locally can’t reach the API.</div>`;
+    body=`<div class="note">Live search runs on the deployed site. Open your Vercel link to query the SEC — opening the raw file locally can't reach the API.</div>`;
   } else if(c.loading){
     body=`<div class="panel"><span class="spin"></span>Scanning SEC Form D filings live…</div>`;
   } else if(c.error){
     body=`<div class="elig no" style="margin-top:0"><span class="i">⦸</span><span>${c.error}</span></div>`;
   } else if(c.data){
     const d=c.data;
-    if(!d.totalFilings){ body=`<div class="note">No Form D filings matched &ldquo;${d.query}&rdquo;. Their vehicles may file under differently-named entities — try the sponsor&rsquo;s fund names, or check their Form ADV first.</div>`; }
+    if(!d.totalFilings){ body=`<div class="note">No Form D filings matched &ldquo;${d.query}&rdquo;. Their vehicles may file under differently-named entities — try the sponsor's fund names, or check their Form ADV first.</div>`; }
     else {
       const feeders=(d.feeders||[]).map(f=>`<div class="pcard"><div class="pgrow">
         <div class="pname">${f.name}</div>
         <div class="pmeta">${f.sponsor?("Channel: <b style='color:var(--accent)'>"+f.sponsor+"</b> · "):""}${f.exemption||""} ${f.date?("· "+f.date):""}</div>
-        <div class="chips">${f.sold?`<span class="chip">${fmtM(f.sold)} raised</span>`:""}${f.investors?`<span class="chip">${f.investors} investors</span>`:""}</div>
+        <div class="chips">${f.sold?`<span class="chip">${fmtM(f.sold)} raised</span>`:""}${f.investors?`<span class="chip">${f.investors} investors</span>`:""}${f.sold&&f.investors?`<span class="chip p">~${fmt$(Math.round(f.sold/f.investors))} avg — individual-scale checks</span>`:""}</div>
       </div></div>`).join("")||`<div class="note">No distinct feeder/channel vehicles detected in the matched filings.</div>`;
       const people=(d.people||[]).slice(0,40).map((p,i)=>{
         const added=!!c.added[i];
         return `<div class="netitem">
           <div class="grow"><div class="nn">${p.name} ${p.channel?'<span class="chip b" style="margin-left:6px">outreach target</span>':'<span class="chip" style="margin-left:6px">competitor officer</span>'}</div>
-            <div class="nr">${(p.roles||[]).join(", ")||"—"} · ${p.vehicle}</div></div>
+          <div class="nr">${(p.roles||[]).join(", ")||"—"} · ${p.vehicle}</div></div>
           <button class="addbtn ${added?"done":""}" ${added?"":`onclick="addPersonComp(${i})"`}>${added?"✓ Added":"Add to pipeline →"}</button>
         </div>`;}).join("")||`<div class="note">No named individuals in the enriched filings.</div>`;
       const agents=(d.placementAgents||[]).map(a=>`<span class="chip">${a.name}${a.crd?` · CRD ${a.crd}`:""}</span>`).join(" ")||`<span class="muted">none disclosed</span>`;
       body=`
-        <div class="muted" style="margin:0 0 12px">${d.totalFilings} Form D filings · ${(d.counts&&d.counts.fund)||0} funds · ${(d.counts&&d.counts.feeder)||0} feeders · ${(d.counts&&d.counts.spv)||0} SPVs · as of ${(d.asOf||"").slice(0,10)}</div>
-        <div class="panel"><h2>Distribution channels &amp; feeders</h2><p class="sub">Vehicles that pool an outside firm&rsquo;s clients into the competitor — the LP channels to court.</p>${feeders}</div>
-        <div class="panel"><h2>Named people for outreach</h2><p class="sub">Real individuals from the filings. <b>Outreach targets</b> sit at the distribution channels; <b>competitor officers</b> are intel. Emails are appended by the enrichment layer.</p>${people}</div>
-        <div class="panel" style="margin-bottom:0"><h2>Placement agents</h2><p class="sub">Brokers paid to sell the offerings — they hold LP relationships and can be a channel.</p>${agents}</div>`;
+      <div class="muted" style="margin:0 0 12px">${d.totalFilings} Form D filings · ${(d.counts&&d.counts.fund)||0} funds · ${(d.counts&&d.counts.feeder)||0} feeders · ${(d.counts&&d.counts.spv)||0} SPVs · as of ${(d.asOf||"").slice(0,10)}</div>
+      <div class="panel"><h2>Distribution channels &amp; feeders</h2><p class="sub">Vehicles that pool an outside firm's clients into the competitor — the LP channels to court. Watch the investor counts and average check: feeders full of $100k–$1M tickets are proof that <b>HNW individuals already fund this exact strategy</b> — those are Cascade's people.</p>${feeders}</div>
+      <div class="panel"><h2>Named people for outreach</h2><p class="sub">Real individuals from the filings. <b>Outreach targets</b> sit at the distribution channels; <b>competitor officers</b> are intel. Emails are appended by the enrichment layer.</p>${people}</div>
+      <div class="panel" style="margin-bottom:0"><h2>Placement agents</h2><p class="sub">Brokers paid to sell the offerings — they hold LP relationships and can be a channel.</p>${agents}</div>`;
     }
   } else {
     body=`<div class="note">Enter a competitor (e.g. <b>137 Ventures</b>) and run a live scan of their public SEC Form D filings.</div>`;
   }
   return `
-  <div class="eyebrow">05 — Competitive Intelligence</div>
+  <div class="eyebrow">06 — Competitive Intelligence</div>
   <h1 class="page">Competitor LP map</h1>
   <p class="lede">Type a rival and pull their public SEC Form D filings live — the fund vehicles, the <b>feeder / distribution channels</b> pooling capital into them, the <b>named people</b> (GPs, officers, signatories, placement agents), and raise sizes. LP names are confidential; this surfaces the <i>channels and people</i> to approach.</p>
-  <div class="banner">Public SEC data &mdash; competitive intelligence, not an LP list. Outreach is relationship-building under 506(b), not solicitation. Full firm leadership + verified emails come from the enrichment layer.</div>
-  <div class="ppl" style="margin-bottom:8px"><div class="h">Comparable firms &mdash; click to scan (curated; edit anytime)</div></div>
+  <div class="banner">Public SEC data — competitive intelligence, not an LP list. Outreach is relationship-building under 506(b), not solicitation. Full firm leadership + verified emails come from the enrichment layer.</div>
+  <div class="ppl" style="margin-bottom:8px"><div class="h">Comparable firms — click to scan (curated; edit anytime)</div></div>
   <div class="presets" style="margin-bottom:14px">${COMPETITORS.map(x=>`<button class="preset ${c.query===x.n?"on":""}" onclick="pickCompetitor('${x.n.replace(/'/g,"\\'")}')" title="${x.t}">${x.n}</button>`).join("")}</div>
   <div class="finderbar">
     <input id="cq" placeholder="…or type any competitor — e.g. 137 Ventures" value="${c.query}" oninput="state.comp.query=this.value" />
@@ -792,7 +956,7 @@ function viewCompetitor(){
 
 /* ---------- router ---------- */
 function render(){
-  const v={overview:viewOverview,pipeline:viewPipeline,warm:viewWarmNetwork,finder:viewFinder,competitor:viewCompetitor,matcher:viewMatcher,how:viewHow}[state.tab]();
+  const v={overview:viewOverview,pipeline:viewPipeline,warm:viewWarmNetwork,hnw:viewHNW,finder:viewFinder,competitor:viewCompetitor,matcher:viewMatcher,how:viewHow}[state.tab]();
   $("#main").innerHTML=v;
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
@@ -802,5 +966,4 @@ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
 });
 render();
 </script>
-</body>
-</html>
+</body></html>
